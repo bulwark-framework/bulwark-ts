@@ -61,6 +61,9 @@ The one contract both planes share. Status: draft. The schema is not yet encoded
     "compile_workflow_id": "compile-ccs-eligibility-2026-09-12T03:10Z",
     "golden_eval_id": "eval-8821",
     "golden_eval_result": "pass",
+    "corpus_index_ref": "idx-sha256:4b1e…",
+    "researcher_model": "claude-opus-5",
+    "contextualiser_model": "claude-sonnet-5",
     "approved_by": "policy.owner@example.gov",
     "approved_at": "2026-09-14T22:41:00Z",
     "origin_of_questions": { "needs_assessor": "promoted from case proposal CLM-11902" }
@@ -80,6 +83,7 @@ Section references are illustrative, not verified citations.
 - `routing.rules` is an ordered list evaluated first-match. Each rule has one condition on one question: `band` (`no`, `uncertain`, `yes`) for a Noul; `equals` or `is_no_match` for a Choice; `confidence_below` for a Choice or Score; `score_below` or `score_above` for a Score. `routing.default` applies when no rule matches and may not be `auto_decline`. Validation rejects a rule whose question id does not exist or whose condition type does not fit the question type.
 - `thresholds` keys `lo`, `hi`, and `conf_floor` are required. `band` conditions use `lo` and `hi`; `is_no_match` and `confidence_below` without an explicit value use `conf_floor`.
 - `model_pin` is an exact model id, never an alias.
+- `provenance.corpus_index_ref`, `provenance.researcher_model`, and `provenance.contextualiser_model` are optional. A compiled rubric records them; a hand-authored rubric omits them. They are part of the content hash.
 
 ## Golden case shape
 

@@ -12,7 +12,7 @@ Bulwark's runtime plane is an npm library that a developer registers in their ow
 
 ## User Stories
 
-1. As a developer, I want to install one npm package and register its workflows and activities in my existing Temporal worker, so that I do not run a second service to adopt Bulwark.
+1. As a developer, I want to install one core npm package and register its workflows and activities in my existing Temporal worker, so that I do not run a second service to adopt Bulwark. Out-of-the-box intake and researcher activities are optional packages I add when I want them.
 2. As a developer, I want to start a case with a case id, a rubric reference, and the submitted artefacts grouped by facet, so that the workflow has everything it needs from the first event.
 3. As a developer, I want the workflow to resolve a rubric reference to an exact version and content hash once, so that a case never changes rules mid-run.
 4. As a developer, I want `latest-published` resolved to an exact version at case start and recorded, so that I can reproduce what was pinned.
@@ -105,8 +105,8 @@ Prior art: none in this repository. Temporal's own samples for time-skipping tes
 
 - Authoring plane: compile workflow, researchers, compiler beyond structural validation, eval gate, approval.
 - Registry HTTP service and CLI.
-- LLM-backed intake. Only the structured passthrough ships.
-- Bounded runtime researcher. The review contract leaves a slot for it.
+- LLM-backed intake. Only the structured passthrough ships here. The default multimodal intake is planned as the `@bulwark-framework/intake` package under its own spec.
+- Bounded runtime researcher. The review contract leaves a slot for it. Planned over the `AgentRunner` interface in the `activities-claude` and `activities-openai` packages under its own spec.
 - Variants or rubric inheritance.
 - Custom resolver functions supplied by the developer. Routing is declarative in the rubric only.
 - Parking a failed facet for triage while others continue. A failed facet fails the run in this slice.
