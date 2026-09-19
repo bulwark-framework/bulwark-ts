@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 620" width="1120" height="620" font-family="IBM Plex Sans, system-ui, -apple-system, Segoe UI, sans-serif" role="img" aria-label="Runtime plane layers. Five stacked layers from bottom to top: plan 0002 rubric core and stores (implemented), plan 0003 resolver (implemented), plan 0004 activities (planned), plan 0005 assess workflow (planned), plan 0006 assessor review and evidence loop (planned). Each layer lists its modules and the exec plan that owns it. Arrows show that each layer depends only on the layers below it. A side column shows what a developer can do once each layer ships.">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 620" width="1120" height="620" font-family="IBM Plex Sans, system-ui, -apple-system, Segoe UI, sans-serif" role="img" aria-label="Runtime plane layers. Five stacked layers from bottom to top: plan 0002 rubric core and stores (implemented), plan 0003 resolver (implemented), plan 0004 activities (in review), plan 0005 workflow building blocks (planned), plan 0006 assessor review and evidence loop (planned). Each layer lists its modules and the exec plan that owns it. Arrows show that each layer depends only on the layers below it. A side column shows what a developer can do once each layer ships.">
   <title>Runtime plane layers</title>
   <defs>
     <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1C2430"/></marker>
@@ -17,24 +17,24 @@
 
   <!-- Layer 0006 -->
   <rect x="40" y="90" width="700" height="86" rx="8" fill="#FFFFFF" stroke="#6B7480" stroke-width="2" stroke-dasharray="6 4"/>
-  <text x="60" y="116" class="h">0006  Assessor review and evidence loop</text>
-  <text x="60" y="140" class="m">workflows/assessor-review.ts   signals.ts   evidence loop in assess-case.ts</text>
-  <text x="60" y="162" class="s">Child workflow, three Signals, SLA timer, escalation, proposals slot.</text>
+  <text x="60" y="116" class="h">0006  Human decision and evidence blocks</text>
+  <text x="60" y="140" class="m">workflows/human-decision.ts   evidence.ts   signals.ts   examples/disaster-grant</text>
+  <text x="60" y="162" class="s">awaitHumanDecision and awaitEvidence blocks. Signals, SLA timer, escalation hook, proposals slot.</text>
   <text x="690" y="116" class="plan" text-anchor="end">planned</text>
 
   <!-- Layer 0005 -->
   <rect x="40" y="190" width="700" height="86" rx="8" fill="#FFFFFF" stroke="#6B7480" stroke-width="2" stroke-dasharray="6 4"/>
-  <text x="60" y="216" class="h">0005  Assess workflow</text>
-  <text x="60" y="240" class="m">workflows/assess-case.ts   workflows/types.ts   test/helpers/env.ts</text>
-  <text x="60" y="262" class="s">Deterministic AssessCase: pin once, intake fan-out, merge, decide, route. Search attributes.</text>
+  <text x="60" y="216" class="h">0005  Workflow building blocks</text>
+  <text x="60" y="240" class="m">workflows/run-assessment.ts   activities.ts   outcome.ts   testing/</text>
+  <text x="60" y="262" class="s">runAssessment and reassess, called from the developer's own workflow. Pin once by type. Test recipe.</text>
   <text x="690" y="216" class="plan" text-anchor="end">planned</text>
 
   <!-- Layer 0004 -->
-  <rect x="40" y="290" width="700" height="86" rx="8" fill="#FFFFFF" stroke="#6B7480" stroke-width="2" stroke-dasharray="6 4"/>
+  <rect x="40" y="290" width="700" height="86" rx="8" fill="#E3F3F0" stroke="#1F7A6B" stroke-width="2"/>
   <text x="60" y="316" class="h">0004  Activities</text>
   <text x="60" y="340" class="m">activities/factory.ts   resolve-rubric.ts   intake.ts   decide/   failures.ts</text>
   <text x="60" y="362" class="s">Every model call and every I/O. Wraps 0002 errors as non-retryable ApplicationFailure.</text>
-  <text x="690" y="316" class="plan" text-anchor="end">planned</text>
+  <text x="690" y="316" class="done" text-anchor="end">in review, PR #9</text>
 
   <!-- Layer 0003 -->
   <rect x="40" y="390" width="700" height="86" rx="8" fill="#E6EEF9" stroke="#1F5FA8" stroke-width="2"/>

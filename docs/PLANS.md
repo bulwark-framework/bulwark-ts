@@ -29,6 +29,6 @@ Runtime plane, in dependency order. Each plan is a shippable release and a stack
 - [0002-rubric-core.md](exec-plans/active/0002-rubric-core.md): hash, validate, typed errors, rubric stores, disaster-grant fixture. Unblocked.
 - [0003-resolver.md](exec-plans/active/0003-resolver.md): pure routing engine, band helpers, merge.
 - [0004-activities.md](exec-plans/active/0004-activities.md): resolve-rubric, intake, decide activities; live TypeSafe test.
-- [0005-assess-workflow.md](exec-plans/active/0005-assess-workflow.md): `AssessCase` on the automatic routes, search attributes, test recipe.
-- [0006-assessor-review.md](exec-plans/active/0006-assessor-review.md): human child workflow, Signals, SLA, evidence loop. Completes spec 0001.
+- [0005-workflow-building-blocks.md](exec-plans/active/0005-workflow-building-blocks.md): `runAssessment`, `reassess`, activity proxies, outcome record, search-attribute convention, testing entry with the invariants check. No shipped workflow.
+- [0006-human-decision.md](exec-plans/active/0006-human-decision.md): `awaitHumanDecision`, `awaitEvidence`, Signals, SLA, the evidence loop pattern, the examples package. Completes spec 0001.
 - [0007-authoring-api.md](exec-plans/active/0007-authoring-api.md): typed `defineRubric` builder and `bulwark rubric build`. Depends on 0003 only; can run beside 0004 to 0006.

@@ -48,6 +48,8 @@ Dated. Newest first. Each entry says what was decided and why. Reversing a decis
 
 **Code-first authoring, artifact-first runtime.** Developers author the state schema (Zod), static state, thresholds, and routing in TypeScript through a typed `defineRubric` builder. The builder serialises to the JSON rubric artifact, which stays the unit that is hashed, eval-gated, approved, pinned, and shared with the Python runtime. Routing never moves into runtime code. Reason: types, autocomplete on question ids, refactors, and unit tests for authors; pinning, eval coverage, named approval, and portability for the runtime. See [rubric-authorship.md](rubric-authorship.md) and plan 0007. Recorded 2026-09-19.
 
+**Workflow building blocks, not a shipped workflow.** The runtime plane exports activities and sandbox-safe functions (`runAssessment`, `reassess`, `awaitHumanDecision`, `awaitEvidence`, an evidence budget, an outcome-record builder, a search-attribute helper) that the developer composes in their own Temporal workflow. No `AssessCase` or `AssessorReview` workflow ships. A reference workflow lives in tests and in the examples package. Reason: Bulwark is a framework; adopters own their workflow shape, ids, Queries, and outcome storage, and a canned workflow is forked the moment any of those differ, which loses the guarantee anyway. The invariants that live in control flow move to types (pinned rubric object, never a reference, after the first resolve) and to a history-based invariants check in the testing entry. See [runtime-plane.md](runtime-plane.md) and plans 0005 and 0006. Recorded 2026-09-19.
+
 ## Open
 
 **LLM provider for researcher and intake.** Claude is the default candidate. Provider stays behind the activity boundary either way.

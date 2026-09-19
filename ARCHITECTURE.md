@@ -8,7 +8,7 @@ Two Temporal-orchestrated planes share one registry. The **authoring plane** tur
 
 ## Diagram
 
-![Bulwark architecture: authoring plane with corpus indexing, researcher agents, compiler, eval gate and human approval; a rubric store between the planes; runtime plane with resolve and pin, intake, merge, decide, resolver, assessor review child, and bounded researcher](docs/diagrams/architecture.svg)
+![Bulwark architecture: authoring plane with corpus indexing, researcher agents, compiler, eval gate and human approval; a rubric store between the planes; runtime plane with resolve and pin, intake, merge, decide, resolver, human decision block, and bounded researcher](docs/diagrams/architecture.svg)
 
 Source: [docs/diagrams/architecture.svg](docs/diagrams/architecture.svg). Colour marks the owner of each judgment: orange researcher agents, purple retrieval, violet intake, teal TypeSafe, blue rubric store, grey human, black plain code. Monospace labels name the `@bulwark-framework` package.
 
@@ -41,7 +41,7 @@ Only `core` exists today (scaffolded 2026-09-19). Each other package arrives wit
 | Researcher activity | authoring | Agent over the corpus index. Emits typed questions with citations and required state paths. Never answers them. Tools: `retrieve`, `get_chunk`, `emit_question`. Model id recorded in rubric provenance. | `core/src/compile/researcher.ts` over `AgentRunner` | Agent runner plus retriever | proposed |
 | Compiler | authoring | Validates the merged question set: schema, citations resolve, no-match options present, state paths exist, dedupe. | `core/src/compile/compiler.ts` | Plain TypeScript, Zod | proposed |
 | Eval gate | authoring | Runs golden cases N times through TypeSafe. Checks route agreement, stability, no regression, coverage, answer agreement. | `core/src/compile/eval.ts` | `@typesafe-ai/sdk` | proposed |
-| Assess workflow | runtime | Temporal workflow: resolve and pin, intake fan-out, merge state, decide, route, human child workflow. | `core/src/workflows/` | Temporal | proposed |
+| Workflow building blocks | runtime | Sandbox-safe functions the developer calls from their own Temporal workflow: `runAssessment` (resolve and pin, intake fan-out, merge, decide, route), `reassess`, `awaitHumanDecision`, `awaitEvidence`, evidence budget, outcome record, search-attribute helper. No workflow is shipped for registration; a reference lives in tests and the examples package. | `core/src/workflows/`, `core/src/testing/` | `@temporalio/workflow` | proposed (plans 0005, 0006) |
 | Resolve rubric activity | runtime | Resolves an exact or latest published version, verifies its hash, and returns the pinned identity. | [packages/core/src/activities/resolve-rubric.ts](packages/core/src/activities/resolve-rubric.ts) | Rubric store, schema validation, content hash | implemented (plan 0004) |
 | Intake activity | runtime | Developer-supplied extraction of one facet into the rubric's state schema. A structured-JSON passthrough ships in `core`. | [packages/core/src/activities/intake.ts](packages/core/src/activities/intake.ts) | Plain TypeScript, Ajv | implemented (plan 0004) |
 | Default multimodal intake | runtime | Agent loop over a facet's artefacts, each file with its own disposition. Tools: `read_document` (native PDF and image input), `ocr` (fallback through the OCR interface), `emit_fragment`. Word converted to PDF, text extraction as fallback. Model id is worker config. | `intake/src/` over `AgentRunner` | Agent runner; native PDF and image inputs; Word to PDF converter | proposed |
@@ -57,7 +57,7 @@ Indexing: corpus → `IndexCorpus` (chunk → contextualise → embed → upsert
 
 Authoring: corpus index → researchers (parallel, agent runner) → compiler → draft → eval gate → candidate → human approval Signal → published rubric in registry.
 
-Runtime: case start → resolve rubric by ref, verify hash, pin → intake activities (parallel, cached by content hash) → merge case state with rubric `static_state` → `systemOne` → resolver → auto outcome, or human child workflow (with bounded researcher proposals), or request-information loop back to intake.
+Runtime: case start → resolve rubric by ref, verify hash, pin → intake activities (parallel, cached by content hash) → merge case state with rubric `static_state` → `systemOne` → resolver → auto outcome, or the human-decision block (with bounded researcher proposals), or request-information loop back to intake. Every step after the resolver is the developer's workflow branching on the result.
 
 ## Rubric artifact
 

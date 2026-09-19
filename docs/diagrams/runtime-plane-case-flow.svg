@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 800" width="1120" height="800" font-family="IBM Plex Sans, system-ui, -apple-system, Segoe UI, sans-serif" role="img" aria-label="One case through the runtime plane. External services sit above the workflow: the rubric store and TypeSafe System One. The AssessCase workflow runs left to right: resolve rubric activity reads the rubric store, verifies the hash, and pins one version. Intake activities run in parallel, one per facet, validated against the rubric state schema. Merge is pure workflow code that applies static state last. The decide activity makes one TypeSafe systemOne call and maps the answers. The resolver is pure workflow code that returns a route and reasons. Automatic routes finalise the case. The assessor route starts the AssessorReview child workflow, which waits on decision or requestInfo Signals with an SLA timer. The request_info route waits for an evidence Signal, then loops back to intake for the named facets only, bounded by maxEvidenceLoops. The assessor's client sits below the workflow and sends Signals. Colour marks the owner: blue rubric store, violet intake, teal TypeSafe, grey human, black plain code.">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 800" width="1120" height="800" font-family="IBM Plex Sans, system-ui, -apple-system, Segoe UI, sans-serif" role="img" aria-label="One case through the runtime plane. External services sit above the workflow: the rubric store and TypeSafe System One. The developer's workflow runs left to right, calling runAssessment: resolve rubric activity reads the rubric store, verifies the hash, and pins one version. Intake activities run in parallel, one per facet, validated against the rubric state schema. Merge is pure workflow code that applies static state last. The decide activity makes one TypeSafe systemOne call and maps the answers. The resolver is pure workflow code that returns a route and reasons. Automatic routes finalise the case. The assessor route calls the awaitHumanDecision block, which waits on decision or requestInfo Signals with an SLA timer inside the same workflow. The request_info route waits for an evidence Signal, then loops back to intake for the named facets only, bounded by maxEvidenceLoops. The assessor's client sits below the workflow and sends Signals. Colour marks the owner: blue rubric store, violet intake, teal TypeSafe, grey human, black plain code.">
   <title>One case through the runtime plane</title>
   <defs>
     <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1C2430"/></marker>
@@ -31,9 +31,9 @@
 
   <!-- Workflow boundary -->
   <rect x="40" y="150" width="1040" height="420" rx="12" fill="#FFFFFF" stroke="#1C2430" stroke-width="2"/>
-  <text x="300" y="176" class="h">AssessCase workflow</text>
-  <text x="520" y="176" class="m">workflows/assess-case.ts (0005)</text>
-  <text x="1060" y="176" class="s" text-anchor="end">deterministic: imports only resolver, merge, and types</text>
+  <text x="300" y="176" class="h">The developer's workflow</text>
+  <text x="520" y="176" class="m">runAssessment (0005)</text>
+  <text x="1060" y="176" class="s" text-anchor="end">blocks import only resolver, schema, types</text>
 
   <!-- Step 1: resolve rubric -->
   <rect x="60" y="210" width="170" height="110" rx="8" fill="#E6EEF9" stroke="#1F5FA8" stroke-width="2"/>
@@ -100,24 +100,24 @@
   <!-- assessor route -->
   <line x1="470" y1="360" x2="470" y2="398" stroke="#1C2430" stroke-width="2" marker-end="url(#arr)"/>
   <rect x="330" y="400" width="280" height="130" rx="8" fill="#EEF0F3" stroke="#6B7480" stroke-width="2"/>
-  <text x="470" y="426" class="b" text-anchor="middle">assessor  →  AssessorReview child</text>
-  <text x="470" y="444" class="s" text-anchor="middle">workflows/assessor-review.ts (0006)</text>
-  <text x="345" y="468" class="t">Input: state, answers, resolution, proposals.</text>
-  <text x="345" y="486" class="t">Signals: decision, requestInfo. Query: status.</text>
-  <text x="345" y="504" class="t">SLA timer → escalated, keeps waiting.</text>
-  <text x="345" y="522" class="t">Never touches an activity.</text>
+  <text x="470" y="426" class="b" text-anchor="middle">assessor  →  awaitHumanDecision</text>
+  <text x="470" y="444" class="s" text-anchor="middle">workflows/human-decision.ts (0006)</text>
+  <text x="345" y="468" class="t">Input: sla, proposals, onEscalate hook.</text>
+  <text x="345" y="486" class="t">Signals: decision, requestInfo. Status for a Query.</text>
+  <text x="345" y="504" class="t">SLA timer → onEscalate(), keeps waiting.</text>
+  <text x="345" y="522" class="t">Runs inside the developer's workflow.</text>
 
   <!-- request_info route -->
   <line x1="800" y1="360" x2="800" y2="398" stroke="#1C2430" stroke-width="2" marker-end="url(#arr)"/>
   <rect x="680" y="400" width="240" height="130" rx="8" fill="#FFFFFF" stroke="#1C2430" stroke-width="2"/>
   <text x="800" y="426" class="b" text-anchor="middle">request_info</text>
-  <text x="800" y="444" class="s" text-anchor="middle">evidence loop (0006)</text>
+  <text x="800" y="444" class="s" text-anchor="middle">awaitEvidence + reassess (0006)</text>
   <text x="695" y="468" class="t">Wait for an evidence Signal that</text>
   <text x="695" y="486" class="t">names facets. Re-run intake for</text>
   <text x="695" y="504" class="t">those only, re-merge, re-decide.</text>
-  <text x="695" y="522" class="t">Bounded by maxEvidenceLoops (3).</text>
+  <text x="695" y="522" class="t">Bounded by createEvidenceBudget(3).</text>
 
-  <!-- requestInfo from child goes to request_info box -->
+  <!-- requestInfo result goes to request_info box -->
   <line x1="610" y1="465" x2="678" y2="465" stroke="#6B7480" stroke-width="2" marker-end="url(#arrG)"/>
   <text x="644" y="456" class="s" text-anchor="middle">requestInfo</text>
 
