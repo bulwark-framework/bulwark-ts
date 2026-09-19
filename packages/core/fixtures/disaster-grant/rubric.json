@@ -2,13 +2,10 @@
   "scheme": "disaster-grant",
   "version": "2026.9.1",
   "status": "published",
-  "content_hash": "sha256:c9371f59ee310d0267b4a84825a89e482655762c3a9d23ad873f4a801d41139c",
+  "content_hash": "sha256:5613ef08e86de98f744028539489d917350385a4eb0e1a921fb185a2312e0611",
   "state_schema": {
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "type": "object",
     "properties": {
       "applicant": {
-        "type": "object",
         "properties": {
           "role": {
             "type": "string"
@@ -16,10 +13,15 @@
           "identity_verified": {
             "type": "boolean"
           }
-        }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "role",
+          "identity_verified"
+        ]
       },
       "business": {
-        "type": "object",
         "properties": {
           "abn": {
             "type": "string"
@@ -36,49 +38,67 @@
           "annual_turnover_aud": {
             "type": "number"
           }
-        }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "abn",
+          "abn_registered_at",
+          "location_lga",
+          "employee_count",
+          "annual_turnover_aud"
+        ]
       },
       "event": {
-        "type": "object",
         "properties": {
           "declaration_id": {
             "type": "string"
           },
           "declared_lgas": {
-            "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "type": "array"
           },
           "occurred_at": {
             "type": "string"
           }
-        }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "declaration_id",
+          "declared_lgas",
+          "occurred_at"
+        ]
       },
       "damage": {
-        "type": "object",
         "properties": {
           "description": {
             "type": "string"
           },
           "photograph_captions": {
-            "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "type": "array"
           },
           "claimed_cost_aud": {
             "type": "number"
           }
-        }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "description",
+          "photograph_captions",
+          "claimed_cost_aud"
+        ]
       },
       "costs": {
-        "type": "object",
         "properties": {
           "items": {
-            "type": "array",
             "items": {
-              "type": "object",
               "properties": {
                 "description": {
                   "type": "string"
@@ -86,13 +106,24 @@
                 "amount_aud": {
                   "type": "number"
                 }
-              }
-            }
+              },
+              "additionalProperties": false,
+              "type": "object",
+              "required": [
+                "description",
+                "amount_aud"
+              ]
+            },
+            "type": "array"
           }
-        }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "items"
+        ]
       },
       "insurance": {
-        "type": "object",
         "properties": {
           "policy_status": {
             "type": "string"
@@ -103,51 +134,86 @@
           "settlement_aud": {
             "type": "number"
           }
-        }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "policy_status",
+          "claim_status",
+          "settlement_aud"
+        ]
       },
       "evidence": {
-        "type": "object",
         "properties": {
           "documents": {
-            "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "type": "array"
           },
           "invoice_captions": {
-            "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "type": "array"
           }
-        }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "documents",
+          "invoice_captions"
+        ]
       },
       "other_assistance": {
-        "type": "object",
         "properties": {
           "grants_received": {
-            "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "type": "array"
           }
-        }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "grants_received"
+        ]
       },
       "case": {
-        "type": "object",
         "properties": {
           "flags": {
-            "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "type": "array"
           },
           "claimed_amount_aud": {
             "type": "number"
           }
-        }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "flags",
+          "claimed_amount_aud"
+        ]
       }
-    }
+    },
+    "additionalProperties": false,
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "required": [
+      "applicant",
+      "business",
+      "event",
+      "damage",
+      "costs",
+      "insurance",
+      "evidence",
+      "other_assistance",
+      "case"
+    ]
   },
   "static_state": {
     "policy": {
@@ -165,70 +231,110 @@
   },
   "questions": {
     "business_in_declared_area": {
-      "type": "noul",
       "instructions": "Is the business's primary place of operation in a local government area named in `event.declared_lgas`, as `policy.declared_area_s11` requires?",
+      "cites": [
+        "s11(1)",
+        "s11(2)(a)"
+      ],
+      "required_paths": [
+        "business.location_lga",
+        "event.declared_lgas",
+        "policy.declared_area_s11"
+      ],
+      "type": "noul",
       "criteria": {
         "true": "The business location is one of the declared areas for this event.",
         "false": "The business location is outside every declared area, or no declaration covers the event."
-      },
-      "cites": ["s11(1)", "s11(2)(a)"],
-      "required_paths": ["business.location_lga", "event.declared_lgas", "policy.declared_area_s11"]
+      }
     },
     "applicant_is_owner": {
-      "type": "noul",
       "instructions": "Does `applicant.role` show that the applicant owns the business, or holds written authority to apply for the owner, as `policy.eligible_applicant_s12` requires?",
-      "cites": ["s12(1)"],
-      "required_paths": ["applicant.role", "policy.eligible_applicant_s12"]
+      "cites": [
+        "s12(1)"
+      ],
+      "required_paths": [
+        "applicant.role",
+        "policy.eligible_applicant_s12"
+      ],
+      "type": "noul"
     },
     "business_is_small": {
-      "type": "noul",
       "instructions": "Do `business.employee_count` and `business.annual_turnover_aud` meet the small business test in `policy.small_business_s13`?",
-      "cites": ["s13(1)(a)", "s13(1)(b)"],
+      "cites": [
+        "s13(1)(a)",
+        "s13(1)(b)"
+      ],
       "required_paths": [
         "business.employee_count",
         "business.annual_turnover_aud",
         "policy.small_business_s13"
-      ]
+      ],
+      "type": "noul"
     },
     "abn_active_before_event": {
-      "type": "noul",
       "instructions": "Was the ABN in `business.abn` active before `event.occurred_at`, as `policy.registration_s14` requires?",
-      "cites": ["s14(2)"],
+      "cites": [
+        "s14(2)"
+      ],
       "required_paths": [
         "business.abn_registered_at",
         "event.occurred_at",
         "policy.registration_s14"
       ],
+      "type": "noul",
       "criteria": {
         "true": "The ABN was registered and active before the day the event started.",
         "false": "The ABN was registered on or after that day, or was not active."
       }
     },
     "direct_damage_established": {
-      "type": "noul",
       "instructions": "Does `damage.description` describe damage the event caused directly, and not lost trade, under `policy.direct_damage_s15`?",
-      "cites": ["s15(1)", "s15(3)"],
+      "cites": [
+        "s15(1)",
+        "s15(3)"
+      ],
       "required_paths": [
         "damage.description",
         "damage.photograph_captions",
         "policy.direct_damage_s15"
-      ]
+      ],
+      "type": "noul"
     },
     "costs_are_eligible": {
-      "type": "noul",
       "instructions": "Is every item in `costs.items` an eligible cost under `policy.eligible_costs_s16`?",
-      "cites": ["s16(1)", "s16(4)"],
-      "required_paths": ["costs.items", "policy.eligible_costs_s16"]
+      "cites": [
+        "s16(1)",
+        "s16(4)"
+      ],
+      "required_paths": [
+        "costs.items",
+        "policy.eligible_costs_s16"
+      ],
+      "type": "noul"
     },
     "no_duplicate_assistance": {
-      "type": "noul",
       "instructions": "Is every claimed cost free of another government grant for the same event, listed in `other_assistance.grants_received`, under `policy.no_duplication_s21`?",
-      "cites": ["s21(1)"],
-      "required_paths": ["other_assistance.grants_received", "policy.no_duplication_s21"]
+      "cites": [
+        "s21(1)"
+      ],
+      "required_paths": [
+        "other_assistance.grants_received",
+        "policy.no_duplication_s21"
+      ],
+      "type": "noul"
     },
     "insurance_overlap": {
-      "type": "choice",
       "instructions": "Which insurance position applies to the claimed costs, given `insurance.policy_status`, `insurance.claim_status`, and `insurance.settlement_aud`? Use `policy.insurance_offset_s18`.",
+      "cites": [
+        "s18(1)",
+        "s18(2)"
+      ],
+      "required_paths": [
+        "insurance.policy_status",
+        "insurance.claim_status",
+        "policy.insurance_offset_s18"
+      ],
+      "type": "choice",
       "criteria": {
         "not_insured": "The business held no policy that covers the claimed items.",
         "insured_no_claim": "A policy covers the items but the business has made no claim.",
@@ -237,35 +343,37 @@
         "fully_settled": "The insurer has paid, or will pay, every claimed item in full.",
         "none_of_the_above": "The position does not fit any option above."
       },
-      "no_match": "none_of_the_above",
-      "cites": ["s18(1)", "s18(2)"],
-      "required_paths": [
-        "insurance.policy_status",
-        "insurance.claim_status",
-        "policy.insurance_offset_s18"
-      ]
+      "no_match": "none_of_the_above"
     },
     "evidence_quality": {
-      "type": "score",
       "instructions": "How well do `evidence.documents` and `evidence.invoice_captions` substantiate the claimed costs? Use the levels in `policy.evidence_guideline_4_2`.",
+      "cites": [
+        "Guideline 4.2"
+      ],
+      "required_paths": [
+        "evidence.documents",
+        "evidence.invoice_captions",
+        "policy.evidence_guideline_4_2"
+      ],
+      "type": "score",
       "criteria": [
         "No evidence of the claimed costs.",
         "The applicant's own statement only.",
         "Third-party quotes or photographs, but no invoices.",
         "Itemised invoices or receipts that cover the claimed costs."
-      ],
-      "cites": ["Guideline 4.2"],
-      "required_paths": [
-        "evidence.documents",
-        "evidence.invoice_captions",
-        "policy.evidence_guideline_4_2"
       ]
     },
     "needs_senior": {
-      "type": "noul",
       "instructions": "Do `case.flags` and `case.claimed_amount_aud` show a case that a senior assessor must see under `policy.escalation_guideline_6_1`?",
-      "cites": ["Guideline 6.1"],
-      "required_paths": ["case.flags", "case.claimed_amount_aud", "policy.escalation_guideline_6_1"]
+      "cites": [
+        "Guideline 6.1"
+      ],
+      "required_paths": [
+        "case.flags",
+        "case.claimed_amount_aud",
+        "policy.escalation_guideline_6_1"
+      ],
+      "type": "noul"
     }
   },
   "routing": {

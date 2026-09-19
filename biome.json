@@ -22,5 +22,13 @@
         "organizeImports": "on"
       }
     }
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["packages/core/fixtures/disaster-grant/rubric.json"],
+      "formatter": {
+        "enabled": false
+      }
+    }
+  ]
 }
