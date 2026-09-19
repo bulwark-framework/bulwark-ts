@@ -38,6 +38,9 @@ importers:
       '@typesafe-ai/sdk':
         specifier: 0.6.0
         version: 0.6.0
+      ajv:
+        specifier: 8.20.0
+        version: 8.20.0
       commander:
         specifier: 15.0.0
         version: 15.0.0

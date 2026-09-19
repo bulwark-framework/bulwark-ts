@@ -55,15 +55,16 @@
     "@temporalio/common": "1.24.0",
     "@temporalio/workflow": "1.24.0",
     "@typesafe-ai/sdk": "0.6.0",
+    "ajv": "8.20.0",
     "commander": "15.0.0",
     "zod": "4.6.5"
   },
   "devDependencies": {
     "@temporalio/testing": "1.24.0",
-    "vitest": "5.0.1",
     "@temporalio/worker": "1.24.0",
     "@types/node": "22.20.4",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "vitest": "5.0.1"
   },
   "bin": {
     "bulwark": "./dist/cli/index.js"
