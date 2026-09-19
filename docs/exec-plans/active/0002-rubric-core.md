@@ -1,6 +1,6 @@
 # 0002 Rubric core and stores
 
-Status: blocked on [0001-scaffold.md](0001-scaffold.md) acceptance criteria. Spec: [0001-runtime-plane.md](../../product-specs/0001-runtime-plane.md) stories 33 to 37, 39 (error types only). First shippable release: a developer can validate, hash, and load rubric files with no Temporal and no TypeSafe.
+Status: active, unblocked 2026-09-19 ([0001-scaffold.md](../completed/0001-scaffold.md) complete). Spec: [0001-runtime-plane.md](../../product-specs/0001-runtime-plane.md) stories 33 to 37, 39 (error types only). First shippable release: a developer can validate, hash, and load rubric files with no Temporal and no TypeSafe.
 
 ## Scope
 

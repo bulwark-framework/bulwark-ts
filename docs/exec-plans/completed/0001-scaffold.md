@@ -1,6 +1,6 @@
 # 0001 Scaffold
 
-Status: active, unblocked. Toolchain decided 2026-09-19: Node 22, pnpm, Vitest, Biome. Amended 2026-09-19: pnpm workspace with `packages/core` only, scope `@bulwark-framework` (see [decisions-log.md](../../design-docs/decisions-log.md)).
+Status: complete 2026-09-19; all six acceptance criteria have passing entries. Toolchain decided 2026-09-19: Node 22, pnpm, Vitest, Biome. Amended 2026-09-19: pnpm workspace with `packages/core` only, scope `@bulwark-framework` (see [decisions-log.md](../../design-docs/decisions-log.md)).
 
 ## Scope
 
@@ -57,7 +57,7 @@ Node 22 pinned in `.nvmrc` and `engines`. pnpm workspace (`pnpm-workspace.yaml`,
 | 2026-09-19 | `pnpm test` | 1 file, 31 tests passed after review fixes: design-doc example validates; Choice without no-match label, unresolved required path, missing threshold keys, unknown rule question, mismatched condition kind, `auto_decline` default all rejected |
 | 2026-09-19 | `bash scripts/check-harness.sh` | pass |
 | 2026-09-19 | Adversarial review (fresh-context agent) | no blockers; 6 should-fix (prototype keys resolved as paths, loosened hash regex, unbounded score levels, published without provenance, boolean/tuple JSON Schema rejected, `confidence_below: true` undocumented) all fixed with tests; nits on path dot-index ambiguity and union error messages deferred to 0002 |
-| 2026-09-19 | CI on first push | pending |
+| 2026-09-19 | CI on first push of `feat/scaffold` | success, run 35417335386 (lint, typecheck, test on Node 22) |
 
 ## Open questions
 

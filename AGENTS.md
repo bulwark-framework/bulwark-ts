@@ -9,7 +9,7 @@ Status: scaffolded. `packages/core` exists with the rubric schema; no workflows,
 - [ARCHITECTURE.md](ARCHITECTURE.md): the two planes (authoring, runtime), the registry between them, and which component owns which judgment.
 - [docs/design-docs/index.md](docs/design-docs/index.md): decisions already made and their reasons.
 - [docs/product-specs/index.md](docs/product-specs/index.md): feature specs. The first is the runtime plane.
-- [docs/PLANS.md](docs/PLANS.md): how execution plans work; the active plan is the scaffold.
+- [docs/PLANS.md](docs/PLANS.md): how execution plans work; the active plan is 0002, rubric core.
 - [docs/QUALITY_SCORE.md](docs/QUALITY_SCORE.md): what has actually been verified. Currently nothing.
 
 ## Invariants

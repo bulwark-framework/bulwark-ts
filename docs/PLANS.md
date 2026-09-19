@@ -25,8 +25,8 @@ Create in `active/`. Update as work happens. When every acceptance criterion has
 
 Runtime plane, in dependency order. Each plan is a shippable release and a stacked PR layer on the one before it.
 
-- [0001-scaffold.md](exec-plans/active/0001-scaffold.md): workspace, toolchain, rubric schema. Unblocked.
-- [0002-rubric-core.md](exec-plans/active/0002-rubric-core.md): hash, validate, typed errors, rubric stores, disaster-grant fixture.
+- [0001-scaffold.md](exec-plans/completed/0001-scaffold.md): workspace, toolchain, rubric schema. Completed 2026-09-19.
+- [0002-rubric-core.md](exec-plans/active/0002-rubric-core.md): hash, validate, typed errors, rubric stores, disaster-grant fixture. Unblocked.
 - [0003-resolver.md](exec-plans/active/0003-resolver.md): pure routing engine, band helpers, merge.
 - [0004-activities.md](exec-plans/active/0004-activities.md): resolve-rubric, intake, decide activities; live TypeSafe test.
 - [0005-assess-workflow.md](exec-plans/active/0005-assess-workflow.md): `AssessCase` on the automatic routes, search attributes, test recipe.
