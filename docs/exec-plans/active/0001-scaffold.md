@@ -31,7 +31,7 @@ Node 22 pinned in `.nvmrc` and `engines`. pnpm workspace (`pnpm-workspace.yaml`,
 - [ ] `tsconfig.json` strict
 - [ ] Lint and format config
 - [ ] `packages/core/src/{rubric,resolver,workflows,activities,store,agent}/` each with an index; layout follows the spec's package shape. `agent/` holds only the `AgentRunner` interface placeholder
-- [ ] `packages/core/src/rubric/schema.ts` with the Zod schema and structural rules (no-match label, required paths resolve, threshold keys, routing rules reference known questions, `auto_decline` never default)
+- [ ] `packages/core/src/rubric/schema.ts` with the Zod schema and structural rules (no-match label, required paths resolve, threshold keys, routing rules reference known questions, `auto_decline` never default; `provenance.corpus_index_ref`, `researcher_model`, `contextualiser_model` optional)
 - [ ] Tests for criterion 3
 - [ ] CI workflow
 - [ ] Update `ARCHITECTURE.md` rows from proposed to implemented for the schema
