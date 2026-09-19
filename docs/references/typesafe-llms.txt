@@ -1,0 +1,15 @@
+TypeSafe documentation index: https://docs.typesafe.ai/llms.txt
+Fetch any page as Markdown by appending .md, for example https://docs.typesafe.ai/primitives.md
+
+Pages this project relies on:
+- https://docs.typesafe.ai/primitives.md
+- https://docs.typesafe.ai/primitives/choice.md
+- https://docs.typesafe.ai/primitives/noul.md
+- https://docs.typesafe.ai/primitives/score.md
+- https://docs.typesafe.ai/concepts/state.md
+- https://docs.typesafe.ai/confidence.md
+- https://docs.typesafe.ai/sdk/javascript.md
+- https://docs.typesafe.ai/cookbooks/consistency_noul_cookbook.md
+
+SDK source (v0.6.0): https://github.com/typesafe-ai/typesafe-sdk-js/blob/v0.6.0/src/types.ts
+Reviewed 2026-09-19.

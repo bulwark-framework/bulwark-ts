@@ -1,0 +1,195 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 860" width="1120" height="860" font-family="IBM Plex Sans, system-ui, -apple-system, Segoe UI, sans-serif" role="img" aria-label="Bulwark architecture. Top: authoring plane. An IndexCorpus workflow chunks, contextualises, and embeds a content-hashed corpus into a Qdrant hybrid index. Researcher agents, running on the AgentRunner interface with Bulwark's retrieve, get_chunk, and emit_question tools, read the index and emit typed questions with citations. A compiler validates the set, an eval gate runs the golden set through TypeSafe, and a named human approves via Signal. Middle: rubric store holding immutable scheme@version artifacts. Bottom: runtime plane. AssessCase resolves and pins one version, fans out intake activities (default multimodal agent with an OCR interface, or a structured-JSON passthrough), merges static state, calls TypeSafe systemOne once, and routes in the resolver. Uncertain cases go to an AssessorReview child workflow with Signals and an SLA; a bounded researcher may propose questions there only. Packages are labelled in monospace.">
+  <title>Bulwark architecture</title>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1C2430"/></marker>
+    <marker id="arrR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1F5FA8"/></marker>
+    <marker id="arrO" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#A85E1C"/></marker>
+    <marker id="arrH" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#6B7480"/></marker>
+    <marker id="arrP" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#8A3F8F"/></marker>
+    <marker id="arrI" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#5D4AB3"/></marker>
+  </defs>
+  <style>
+    .ink{fill:#1C2430}.muted{fill:#5B6673}
+    .research{fill:#A85E1C}.intake{fill:#5D4AB3}.decide{fill:#0B7A6A}.human{fill:#6B7480}.registry{fill:#1F5FA8}.retrieval{fill:#8A3F8F}
+    .t{font-size:12.5px;font-weight:600}.s{font-size:10.5px}.tag{font-size:9.5px;font-family:IBM Plex Mono,ui-monospace,Menlo,monospace}
+    .mid{text-anchor:middle}
+  </style>
+  <rect width="1120" height="860" fill="#F5F6F8"/>
+
+  <!-- ===== AUTHORING PLANE ===== -->
+  <rect x="10" y="10" width="1100" height="330" rx="8" fill="none" stroke="#1C2430" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="26" y="34" class="t ink">AUTHORING PLANE  ·  IndexCorpus, then CompileRubric  ·  Temporal, runs per scheme change</text>
+
+  <!-- Row 1: corpus -> index workflow -> index -->
+  <rect x="26" y="60" width="150" height="70" rx="4" fill="#FFFFFF" stroke="#1C2430"/>
+  <text x="101" y="84" class="t ink mid">Corpus store</text>
+  <text x="101" y="100" class="s muted mid">Acts · regs · guidelines</text>
+  <text x="101" y="114" class="s muted mid">content-hashed</text>
+  <text x="101" y="146" class="tag muted mid">core/store</text>
+
+  <rect x="216" y="52" width="220" height="86" rx="4" fill="#F3E8F4" stroke="#8A3F8F" stroke-width="1.5"/>
+  <text x="326" y="74" class="t retrieval mid">IndexCorpus workflow</text>
+  <text x="326" y="91" class="s ink mid">chunk by section → contextualise</text>
+  <text x="326" y="105" class="s ink mid">→ embed → upsert dense + sparse</text>
+  <text x="326" y="121" class="s muted mid">LlamaIndex.TS · OpenAI embeddings</text>
+  <text x="326" y="154" class="tag muted mid">retrieval</text>
+  <line x1="176" y1="95" x2="214" y2="95" stroke="#1C2430" marker-end="url(#arr)"/>
+
+  <rect x="476" y="52" width="190" height="86" rx="4" fill="#F3E8F4" stroke="#8A3F8F" stroke-width="1.5"/>
+  <text x="571" y="74" class="t retrieval mid">Corpus index</text>
+  <text x="571" y="91" class="s ink mid">Qdrant hybrid collection</text>
+  <text x="571" y="105" class="s muted mid">dense + native BM25 sparse</text>
+  <text x="571" y="121" class="s muted mid">keyed by corpus hash</text>
+  <line x1="436" y1="95" x2="474" y2="95" stroke="#8A3F8F" marker-end="url(#arrP)"/>
+
+  <!-- Retriever box -->
+  <rect x="716" y="52" width="200" height="86" rx="4" fill="#F3E8F4" stroke="#8A3F8F" stroke-width="1.5"/>
+  <text x="816" y="74" class="t retrieval mid">Retriever</text>
+  <text x="816" y="91" class="s ink mid">hybrid query → RRF fusion</text>
+  <text x="816" y="105" class="s ink mid">→ Cohere rerank</text>
+  <text x="816" y="121" class="s muted mid">exposed as retrieve · get_chunk</text>
+  <text x="816" y="154" class="tag muted mid">retrieval</text>
+  <line x1="666" y1="95" x2="714" y2="95" stroke="#8A3F8F" marker-end="url(#arrP)"/>
+
+  <!-- Row 2: researchers -> compiler -> eval -> approval -->
+  <rect x="26" y="200" width="230" height="110" rx="4" fill="#FBEFE3" stroke="#A85E1C" stroke-width="1.5"/>
+  <text x="141" y="222" class="t research mid">Researcher agents</text>
+  <text x="141" y="239" class="s ink mid">AgentRunner · Bulwark tools only</text>
+  <text x="141" y="254" class="tag ink mid">retrieve · get_chunk · emit_question</text>
+  <text x="141" y="271" class="s muted mid">emit typed questions with citations</text>
+  <text x="141" y="285" class="s muted mid">never answer them</text>
+  <text x="141" y="302" class="tag muted mid">activities-claude · activities-openai</text>
+  <!-- retriever -> researchers -->
+  <path d="M816 138 V172 H141 V198" fill="none" stroke="#8A3F8F" stroke-width="1.5" marker-end="url(#arrP)"/>
+  <text x="480" y="168" class="s retrieval mid">tool calls from the agent loop</text>
+
+  <rect x="296" y="210" width="180" height="90" rx="4" fill="#FFFFFF" stroke="#1C2430" stroke-width="1.5"/>
+  <text x="386" y="232" class="t ink mid">Compiler</text>
+  <text x="386" y="249" class="s muted mid">schema · citations resolve</text>
+  <text x="386" y="263" class="s muted mid">no-match labels · paths exist</text>
+  <text x="386" y="277" class="s muted mid">routing rules · dedupe</text>
+  <text x="386" y="294" class="tag muted mid">core/rubric · core/compile</text>
+  <line x1="256" y1="255" x2="294" y2="255" stroke="#1C2430" marker-end="url(#arr)"/>
+
+  <rect x="516" y="210" width="190" height="90" rx="4" fill="#E3F3F0" stroke="#0B7A6A" stroke-width="1.5"/>
+  <text x="611" y="232" class="t decide mid">Eval gate</text>
+  <text x="611" y="249" class="s ink mid">golden set × N via systemOne</text>
+  <text x="611" y="263" class="s muted mid">route agreement · stability</text>
+  <text x="611" y="277" class="s muted mid">no regression · coverage</text>
+  <text x="611" y="294" class="tag muted mid">@typesafe-ai/sdk</text>
+  <line x1="476" y1="255" x2="514" y2="255" stroke="#1C2430" marker-end="url(#arr)"/>
+  <text x="495" y="247" class="s muted mid">draft</text>
+
+  <rect x="746" y="210" width="190" height="90" rx="4" fill="#EEF0F3" stroke="#6B7480" stroke-width="1.5"/>
+  <text x="841" y="232" class="t human mid">Human approval</text>
+  <text x="841" y="249" class="s ink mid">await Signal · named identity</text>
+  <text x="841" y="263" class="s muted mid">sees diff, eval report, citations</text>
+  <text x="841" y="277" class="s muted mid">recorded in provenance</text>
+  <line x1="706" y1="255" x2="744" y2="255" stroke="#1C2430" marker-end="url(#arr)"/>
+  <text x="725" y="247" class="s muted mid">candidate</text>
+
+  <!-- publish edge to store -->
+  <path d="M936 255 H1070 V372 H700" fill="none" stroke="#1F5FA8" stroke-width="1.5" marker-end="url(#arrR)"/>
+  <text x="1064" y="322" class="s registry" text-anchor="end">approve → publish scheme@version</text>
+  <text x="1064" y="336" class="s registry" text-anchor="end">provenance: index ref · model ids · approver</text>
+
+  <!-- ===== RUBRIC STORE ===== -->
+  <rect x="400" y="360" width="300" height="80" rx="6" fill="#E6EEF9" stroke="#1F5FA8" stroke-width="2"/>
+  <text x="550" y="384" class="t registry mid" font-size="13.5">RUBRIC STORE</text>
+  <text x="550" y="402" class="s ink mid">scheme@version · content_hash · status</text>
+  <text x="550" y="417" class="s muted mid">get · latestPublished · put</text>
+  <text x="550" y="431" class="s muted mid">in-memory · file · registry service later</text>
+  <text x="712" y="436" class="tag muted">core/store</text>
+
+  <!-- ===== RUNTIME PLANE ===== -->
+  <rect x="10" y="460" width="1100" height="390" rx="8" fill="none" stroke="#1C2430" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="26" y="484" class="t ink">RUNTIME PLANE  ·  AssessCase(caseId, rubricRef, artefacts)  ·  Temporal, runs per case, seconds to days</text>
+
+  <!-- Resolve + pin -->
+  <rect x="26" y="520" width="150" height="70" rx="4" fill="#E6EEF9" stroke="#1F5FA8"/>
+  <text x="101" y="543" class="t registry mid">Resolve + pin</text>
+  <text x="101" y="559" class="s muted mid">first activity · once</text>
+  <text x="101" y="573" class="s muted mid">verify hash · search attrs</text>
+  <path d="M400 400 H101 V518" fill="none" stroke="#1F5FA8" stroke-width="1.5" marker-end="url(#arrR)"/>
+  <text x="120" y="450" class="s registry">fetch by ref: exact version or latest-published</text>
+
+  <!-- Intake -->
+  <rect x="216" y="512" width="220" height="90" rx="4" fill="#EFEBFA" stroke="#5D4AB3"/>
+  <text x="326" y="534" class="t intake mid">Intake activities</text>
+  <text x="326" y="550" class="s ink mid">one per facet · parallel · cached by hash</text>
+  <text x="326" y="565" class="s muted mid">default: multimodal agent loop</text>
+  <text x="326" y="579" class="tag ink mid">read_document · ocr · emit_fragment</text>
+  <text x="326" y="594" class="s muted mid">or structured-JSON passthrough</text>
+  <text x="326" y="618" class="tag muted mid">intake · core/activities</text>
+  <line x1="176" y1="555" x2="214" y2="555" stroke="#1C2430" marker-end="url(#arr)"/>
+
+  <!-- OCR interface -->
+  <rect x="216" y="636" width="220" height="40" rx="4" fill="#FFFFFF" stroke="#5D4AB3" stroke-dasharray="4 3"/>
+  <text x="326" y="653" class="s intake mid" font-weight="600">OCR interface · non-LLM · no default</text>
+  <text x="326" y="668" class="s muted mid">Textract · Azure DI · Tesseract</text>
+  <line x1="326" y1="602" x2="326" y2="634" stroke="#5D4AB3" stroke-dasharray="4 3" marker-end="url(#arrI)"/>
+
+  <!-- Merge -->
+  <rect x="476" y="520" width="130" height="70" rx="4" fill="#FFFFFF" stroke="#1C2430" stroke-width="1.5"/>
+  <text x="541" y="543" class="t ink mid">Merge state</text>
+  <text x="541" y="559" class="s muted mid">fragments + static_state</text>
+  <text x="541" y="573" class="s muted mid">pure · in workflow</text>
+  <line x1="436" y1="555" x2="474" y2="555" stroke="#1C2430" marker-end="url(#arr)"/>
+
+  <!-- Decide -->
+  <rect x="646" y="520" width="190" height="70" rx="4" fill="#E3F3F0" stroke="#0B7A6A" stroke-width="2"/>
+  <text x="741" y="543" class="t decide mid">Decide · systemOne</text>
+  <text x="741" y="559" class="s ink mid">every question · pinned model</text>
+  <text x="741" y="573" class="s muted mid">one call · answers + model + usage</text>
+  <text x="741" y="606" class="tag muted mid">core/activities · @typesafe-ai/sdk</text>
+  <line x1="606" y1="555" x2="644" y2="555" stroke="#1C2430" marker-end="url(#arr)"/>
+
+  <!-- Resolver -->
+  <rect x="876" y="520" width="200" height="70" rx="4" fill="#FFFFFF" stroke="#1C2430" stroke-width="1.5"/>
+  <text x="976" y="543" class="t ink mid">Resolver</text>
+  <text x="976" y="559" class="s muted mid">rules from the rubric · first match</text>
+  <text x="976" y="573" class="s muted mid">pure · in workflow code</text>
+  <text x="976" y="606" class="tag muted mid">core/resolver</text>
+  <line x1="836" y1="555" x2="874" y2="555" stroke="#1C2430" marker-end="url(#arr)"/>
+
+  <!-- Auto outcome -->
+  <rect x="876" y="660" width="200" height="44" rx="22" fill="#FFFFFF" stroke="#1C2430" stroke-width="1.5"/>
+  <text x="976" y="678" class="t ink mid">Outcome record</text>
+  <text x="976" y="693" class="s muted mid">auto_approve · auto_decline</text>
+  <line x1="976" y1="612" x2="976" y2="658" stroke="#1C2430" marker-end="url(#arr)"/>
+  <text x="984" y="640" class="s muted">automatic route</text>
+
+  <!-- Assessor review child -->
+  <rect x="646" y="700" width="210" height="110" rx="4" fill="#EEF0F3" stroke="#6B7480" stroke-width="1.5"/>
+  <text x="751" y="722" class="t human mid">AssessorReview child</text>
+  <text x="751" y="739" class="s ink mid">Signals: decision · requestInfo</text>
+  <text x="751" y="753" class="s ink mid">Query: status · SLA timer → escalated</text>
+  <text x="751" y="768" class="s muted mid">optional advisory proposals</text>
+  <text x="751" y="782" class="s muted mid">returns the human outcome to parent</text>
+  <text x="751" y="802" class="tag muted mid">core/workflows</text>
+  <path d="M900 590 V755 H858" fill="none" stroke="#6B7480" stroke-width="1.5" marker-end="url(#arrH)"/>
+  <text x="906" y="740" class="s human">assessor · request_info</text>
+
+  <!-- Evidence loop -->
+  <path d="M700 700 V692 H326 V678" fill="none" stroke="#5D4AB3" stroke-dasharray="4 3" marker-end="url(#arrI)"/>
+  <text x="513" y="686" class="s intake mid">evidence Signal → re-run named facets → re-decide → re-route</text>
+
+  <!-- Bounded researcher -->
+  <rect x="456" y="750" width="170" height="60" rx="4" fill="#FBEFE3" stroke="#A85E1C" stroke-dasharray="4 3"/>
+  <text x="541" y="770" class="t research mid" font-size="11.5">Bounded researcher</text>
+  <text x="541" y="785" class="s muted mid">human route only · ≤ K proposals</text>
+  <text x="541" y="799" class="s muted mid">same AgentRunner + retriever</text>
+  <line x1="626" y1="780" x2="644" y2="780" stroke="#A85E1C" stroke-dasharray="4 3" marker-end="url(#arrO)"/>
+  <text x="541" y="826" class="s muted mid">advisory · never enters the resolver</text>
+
+  <!-- Legend -->
+  <g font-size="10.5">
+    <rect x="26" y="716" width="10" height="10" rx="2" fill="#A85E1C"/><text x="42" y="725" class="muted">Researcher · AgentRunner (Claude default, OpenAI)</text>
+    <rect x="26" y="736" width="10" height="10" rx="2" fill="#8A3F8F"/><text x="42" y="745" class="muted">Retrieval · LlamaIndex.TS · Qdrant · Cohere</text>
+    <rect x="26" y="756" width="10" height="10" rx="2" fill="#5D4AB3"/><text x="42" y="765" class="muted">Intake · multimodal agent, OCR interface</text>
+    <rect x="26" y="776" width="10" height="10" rx="2" fill="#0B7A6A"/><text x="42" y="785" class="muted">TypeSafe System One</text>
+    <rect x="26" y="796" width="10" height="10" rx="2" fill="#1F5FA8"/><text x="42" y="805" class="muted">Rubric store · immutable versions</text>
+    <rect x="26" y="816" width="10" height="10" rx="2" fill="#6B7480"/><text x="42" y="825" class="muted">Human</text>
+    <rect x="26" y="836" width="10" height="10" rx="2" fill="#1C2430"/><text x="42" y="845" class="muted">Plain code · Temporal · mono = package</text>
+  </g>
+</svg>
