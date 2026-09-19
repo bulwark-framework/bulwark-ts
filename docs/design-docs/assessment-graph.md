@@ -28,7 +28,7 @@ Disaster recovery grant for a small business. Ten questions across all three pri
 - Workflow is the case. Search attributes: scheme, route, band-crossing flags, assessor id, SLA due.
 - Activities are every side effect. Workflow code is deterministic.
 - `Promise.all` fan-out over intake activities. One failed facet parks for triage; the others continue.
-- Human steps are Signals with timers. The assessor queue is a child workflow awaiting `decision` or `requestInfo`, escalating on SLA expiry.
+- Human steps are Signals with timers. The assessor step is a block inside the developer's workflow awaiting `decision` or `requestInfo`, escalating on SLA expiry. (The original note used a child workflow; revised 2026-09-19, see [runtime-plane.md](runtime-plane.md).)
 - `patched()` for prompt and schema changes so old histories replay.
 
 ## Risks recorded
