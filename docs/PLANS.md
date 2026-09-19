@@ -23,4 +23,11 @@ Create in `active/`. Update as work happens. When every acceptance criterion has
 
 ## Current
 
-- [0001-scaffold.md](exec-plans/active/0001-scaffold.md): establish the TypeScript project so code can exist. Blocked on the runtime toolchain decision.
+Runtime plane, in dependency order. Each plan is a shippable release and a stacked PR layer on the one before it.
+
+- [0001-scaffold.md](exec-plans/active/0001-scaffold.md): workspace, toolchain, rubric schema. Unblocked.
+- [0002-rubric-core.md](exec-plans/active/0002-rubric-core.md): hash, validate, typed errors, rubric stores, disaster-grant fixture.
+- [0003-resolver.md](exec-plans/active/0003-resolver.md): pure routing engine, band helpers, merge.
+- [0004-activities.md](exec-plans/active/0004-activities.md): resolve-rubric, intake, decide activities; live TypeSafe test.
+- [0005-assess-workflow.md](exec-plans/active/0005-assess-workflow.md): `AssessCase` on the automatic routes, search attributes, test recipe.
+- [0006-assessor-review.md](exec-plans/active/0006-assessor-review.md): human child workflow, Signals, SLA, evidence loop. Completes spec 0001.
