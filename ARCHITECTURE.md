@@ -1,10 +1,16 @@
 # Architecture
 
-Status: proposed. Nothing below is implemented. When a component lands, change its marker from "proposed" to "implemented" and link the entry point.
+Status: scaffolded. The rubric schema is implemented; everything else is proposed. When a component lands, change its marker from "proposed" to "implemented" and link the entry point.
 
 ## System in one paragraph
 
 Two Temporal-orchestrated planes share one registry. The **authoring plane** turns a scheme's corpus (Acts, regulations, guidelines) into a **rubric**: a versioned, immutable question set expressed in TypeSafe primitives, evaluated against a golden set and approved by a named human. The **runtime plane** runs one workflow per **case**: it resolves and pins a rubric version, extracts submitted material into a state document, calls TypeSafe System One once over all questions, and routes the case in plain code. A bounded runtime researcher may propose extra questions on the human route only.
+
+## Diagram
+
+![Bulwark architecture: authoring plane with corpus indexing, researcher agents, compiler, eval gate and human approval; a rubric store between the planes; runtime plane with resolve and pin, intake, merge, decide, resolver, assessor review child, and bounded researcher](docs/diagrams/architecture.svg)
+
+Source: [docs/diagrams/architecture.svg](docs/diagrams/architecture.svg). Colour marks the owner of each judgment: orange researcher agents, purple retrieval, violet intake, teal TypeSafe, blue rubric store, grey human, black plain code. Monospace labels name the `@bulwark-framework` package.
 
 ## Packages
 
@@ -18,7 +24,7 @@ pnpm workspace. npm scope `@bulwark-framework`. Decided 2026-09-19, see [docs/de
 | `retrieval` | Contextual retrieval: chunking, contextualiser, embeddings, hybrid store, reranker, `IndexCorpus` workflow | `llamaindex`, `@llamaindex/qdrant`, `@llamaindex/openai`, `@llamaindex/cohere` |
 | `intake` | Default multimodal intake activity, document conversion, OCR interface | `AgentRunner`, PDF and Word converters |
 
-Only `core` exists in the scaffold plan. Each other package arrives with its own plan.
+Only `core` exists today (scaffolded 2026-09-19). Each other package arrives with its own plan.
 
 ## Components
 
@@ -26,7 +32,7 @@ Only `core` exists in the scaffold plan. Each other package arrives with its own
 | --- | --- | --- | --- | --- | --- |
 | Rubric store | shared | Interface with get-by-version, latest-published, put. In-memory and file implementations ship first; the registry service implements it later. | `core/src/store/` | TypeScript interface, in-memory and file adapters | proposed |
 | Corpus store | shared | Content-hashed documents keyed by corpus hash. In-memory and file implementations ship first. | `core/src/store/` | TypeScript interface, in-memory and file adapters | proposed |
-| Rubric | shared | Schema, validation, content hash, declarative routing rules. | `core/src/rubric/` | Zod, SHA-256 over canonical JSON | proposed |
+| Rubric | shared | Schema, validation, content hash, declarative routing rules. | [`packages/core/src/rubric/schema.ts`](packages/core/src/rubric/schema.ts) (schema and structural rules); hash and `validate` in plan 0002 | Zod, SHA-256 over canonical JSON | schema implemented, rest proposed |
 | Agent runner | shared | One interface for running an agent with Bulwark-defined tools and a required structured output. Built-in provider tools disabled; agents see only in-process MCP tools. | `core/src/agent/` interface; adapters in `activities-claude`, `activities-openai` | Claude Agent SDK (default), OpenAI Agents SDK; shared contract tests | proposed |
 | Index corpus workflow | authoring | Temporal workflow keyed by corpus hash: chunk by section, contextualise each chunk with the agent provider, embed, upsert dense plus sparse. Index ref recorded in rubric provenance. | `retrieval/src/workflows/` | LlamaIndex.TS ingestion; Qdrant hybrid (dense plus native BM25 sparse); embeddings pluggable, OpenAI `text-embedding-3` default | proposed |
 | Retriever | shared | Hybrid query, reciprocal-rank fusion, rerank. Exposed to agents as `retrieve` and `get_chunk` tools. | `retrieval/src/` | Qdrant hybrid query, Cohere rerank default, pluggable | proposed |

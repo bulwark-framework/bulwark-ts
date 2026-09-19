@@ -2,7 +2,7 @@
 
 Bulwark is a framework for assessment workflows in regulated settings (government, finance, insurance, local government, medical). It compiles law and policy into versioned, human-approved question sets, answers them with TypeSafe System One models, and lets plain code make the determination. Temporal orchestrates every run.
 
-Status: pre-scaffold. No source code exists yet. Every document under `docs/` describes intended design unless it says otherwise.
+Status: scaffolded. `packages/core` exists with the rubric schema; no workflows, activities, or stores yet. Every document under `docs/` describes intended design unless it says otherwise.
 
 ## Read first
 
@@ -37,7 +37,7 @@ Harness check (works now):
 bash scripts/check-harness.sh
 ```
 
-Code checks once the scaffold lands (Node 22, pnpm, Vitest, Biome): `pnpm typecheck`, `pnpm lint`, `pnpm test`. Until the scaffold plan's tasks are ticked these commands do not exist. Do not invent others.
+Code checks (Node 22, pnpm, Vitest, Biome): `pnpm typecheck`, `pnpm lint`, `pnpm test`. Run `pnpm format` before lint. Do not invent others.
 
 ## Conventions
 
