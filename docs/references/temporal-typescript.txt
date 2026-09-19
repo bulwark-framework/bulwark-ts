@@ -1,0 +1,6 @@
+Temporal TypeScript SDK: https://docs.temporal.io/develop/typescript
+Packages: @temporalio/workflow, @temporalio/activity, @temporalio/worker, @temporalio/client, @temporalio/testing
+
+Constraint: workers run on Node. Bun is not supported for the worker process.
+Patterns used in the design: activities for all I/O, Promise.all fan-out, Signals with timers for human steps, child workflows for review queues, patched() for versioning, search attributes for scheme and rubric version.
+Reviewed 2026-09-19.
