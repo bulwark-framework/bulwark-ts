@@ -29,23 +29,31 @@ Out: any Temporal code, any TypeSafe call, the resolver (0003), activities (0004
 
 ## Tasks
 
-- [ ] `packages/core/src/rubric/hash.ts`: `canonicalJson`, `hash`, `stripVolatileFields`. Tests for criterion 1.
-- [ ] `packages/core/src/rubric/errors.ts`: `BulwarkError` and the four subclasses with `name`, `details`. Tests that `name` survives `JSON.stringify` round trip.
-- [ ] `packages/core/src/rubric/validate.ts`: wraps the 0001 Zod schema, collects all issues into `InvalidRubricError`. Tests for criterion 2.
-- [ ] `packages/core/fixtures/disaster-grant/rubric.json` plus `packages/core/fixtures/disaster-grant/README.md` describing each question and rule. Tests for criterion 7.
-- [ ] `packages/core/src/store/types.ts`: `RubricStore`, `RubricRef` (`{ scheme, version }` or `{ scheme, latest: 'published' }`), `compareVersions`. Tests for the ordering decision.
-- [ ] `packages/core/src/store/memory.ts`: in-memory store. Tests for criteria 4 and 6.
-- [ ] `packages/core/src/store/file.ts`: file store. Tests for criteria 4, 5, 6 with a fixture directory.
-- [ ] Export from `rubric/index.ts` and `store/index.ts`. Update `packages/core/package.json` `exports`.
-- [ ] `ARCHITECTURE.md`: Rubric store row to implemented with entry point; Rubric row gains hash and validate.
-- [ ] `docs/QUALITY_SCORE.md`: rubric schema validation row updated with date and command.
-- [ ] Adversarial review of the plan diff before commit (see user-level guidelines).
+- [x] `packages/core/src/rubric/hash.ts`: `canonicalJson`, `hash`, `stripVolatileFields`. Tests for criterion 1.
+- [x] `packages/core/src/rubric/errors.ts`: `BulwarkError` and the four subclasses with `name`, `details`. Tests that `name` survives `JSON.stringify` round trip.
+- [x] `packages/core/src/rubric/validate.ts`: wraps the 0001 Zod schema, collects all issues into `InvalidRubricError`. Tests for criterion 2.
+- [x] `packages/core/fixtures/disaster-grant/rubric.json` plus `packages/core/fixtures/disaster-grant/README.md` describing each question and rule. Tests for criterion 7.
+- [x] `packages/core/src/store/types.ts`: `RubricStore`, `RubricRef` (`{ scheme, version }` or `{ scheme, latest: 'published' }`), `compareVersions`. Tests for the ordering decision.
+- [x] `packages/core/src/store/memory.ts`: in-memory store. Tests for criteria 4 and 6.
+- [x] `packages/core/src/store/file.ts`: file store. Tests for criteria 4, 5, 6 with a fixture directory.
+- [x] Export from `rubric/index.ts` and `store/index.ts`. Update `packages/core/package.json` `exports`.
+- [x] `ARCHITECTURE.md`: Rubric store row to implemented with entry point; Rubric row gains hash and validate.
+- [x] `docs/QUALITY_SCORE.md`: rubric schema validation row updated with date and command.
+- [x] Adversarial review of the plan diff before commit (Codex, gpt-6-astra). Ten findings. Fixed: memory store returned mutable internal references; `compareVersions` lost precision above 2^53 and could return `NaN`; a rule naming a prototype property (`toString`) threw `TypeError` instead of a schema issue; `required_paths` could descend through scalar-typed nodes; file store overwrote in place (now temp file plus rename); sparse arrays produced invalid canonical JSON. Accepted with reasons in Open questions: fixture routing not policy-sane; hash over parsed rubric; `validate` reports refinement issues only when the shape parses; symlink escape in the file store.
 
 ## Verification log
 
 | Date | Command | Result |
 | --- | --- | --- |
+| 2026-09-19 | `pnpm format && pnpm lint` | pass, 33 files |
+| 2026-09-19 | `pnpm typecheck` | pass |
+| 2026-09-19 | `pnpm test` | pass, 108 tests in 8 files (after adversarial review fixes) |
+| 2026-09-19 | `bash scripts/check-harness.sh` | harness ok |
 
 ## Open questions
 
-- Whether `latestPublished` should also verify hashes on read for the in-memory store. Default: no, `put` verifies once.
+- Whether `latestPublished` should also verify hashes on read for the in-memory store. Resolved: no, `put` verifies once. The file store verifies on every read because bytes on disk can change, and it also rejects a file whose declared `scheme` or `version` disagrees with its path.
+- The fixture's routing table exercises every condition kind but is not policy-sane: `evidence_quality score_above 2` auto-approves before most eligibility Nouls are consulted. Plan 0003 resolver tests must author their own expected routes and not treat the fixture table as policy.
+- `validate` collects every Zod issue, but Zod runs the structural refinements only when the base shape parses. A document missing `model_pin` and also carrying a bad rule reports only the missing field. Fixing this means running the refinements on a partial parse; deferred until a consumer needs it.
+- The file store rejects `/`, `\\`, `.` and `..` segments but does not resolve symlinks. A scheme directory that is a symlink outside the root is followed. The file store targets local development and tests; a hostile store directory is out of scope until the registry service.
+- The content hash is computed over the parsed rubric, after Zod defaults. Unknown top-level fields are stripped by the schema and so never enter the hash; this is intended, because code only ever sees the parsed document. A tool in another language (the Python sibling) must apply the same defaults before hashing, or hashes will not agree across implementations.

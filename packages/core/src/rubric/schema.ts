@@ -198,7 +198,9 @@ export const rubricSchema = rubricShape.superRefine((rubric, ctx) => {
   }
 
   rubric.routing.rules.forEach((rule, i) => {
-    const q = rubric.questions[rule.when.question];
+    const q = Object.hasOwn(rubric.questions, rule.when.question)
+      ? rubric.questions[rule.when.question]
+      : undefined;
     const at = ["routing", "rules", i, "when"];
     if (!q) {
       issue(at, `rule ${i} references unknown question "${rule.when.question}"`);
@@ -338,8 +340,18 @@ function resolveInSchema(segments: (string | number)[], node: JsonSchemaNode): b
   return current !== false;
 }
 
+const SCALAR_TYPES = new Set(["string", "number", "integer", "boolean", "null"]);
+
+/**
+ * A node with no child constraints lets any path through, unless it declares
+ * a scalar `type`: a string has no children, so `applicant.role.x` is a typo.
+ */
 function isPermissive(node: JsonSchemaObject): boolean {
-  return !node.properties && node.items === undefined && node.additionalProperties !== false;
+  if (node.properties || node.items !== undefined || node.additionalProperties === false) {
+    return false;
+  }
+  const types = Array.isArray(node.type) ? node.type : [node.type];
+  return !types.every((t) => typeof t === "string" && SCALAR_TYPES.has(t));
 }
 
 function resolveInValue(segments: (string | number)[], value: unknown): boolean {

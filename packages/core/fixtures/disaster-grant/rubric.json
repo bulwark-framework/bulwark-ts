@@ -1,0 +1,266 @@
+{
+  "scheme": "disaster-grant",
+  "version": "2026.9.1",
+  "status": "published",
+  "content_hash": "sha256:768cc7b9bf3d51558b3d6ff6ca3fa4c3f1c0235e119e79c060d901ef4e46f9f6",
+  "state_schema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "applicant": {
+        "type": "object",
+        "properties": {
+          "role": { "type": "string" },
+          "identity_verified": { "type": "boolean" }
+        }
+      },
+      "business": {
+        "type": "object",
+        "properties": {
+          "abn": { "type": "string" },
+          "abn_registered_at": { "type": "string" },
+          "location_lga": { "type": "string" },
+          "employee_count": { "type": "number" },
+          "annual_turnover_aud": { "type": "number" }
+        }
+      },
+      "event": {
+        "type": "object",
+        "properties": {
+          "declaration_id": { "type": "string" },
+          "declared_lgas": { "type": "array", "items": { "type": "string" } },
+          "occurred_at": { "type": "string" }
+        }
+      },
+      "damage": {
+        "type": "object",
+        "properties": {
+          "description": { "type": "string" },
+          "photograph_captions": { "type": "array", "items": { "type": "string" } },
+          "claimed_cost_aud": { "type": "number" }
+        }
+      },
+      "costs": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "description": { "type": "string" },
+                "amount_aud": { "type": "number" }
+              }
+            }
+          }
+        }
+      },
+      "insurance": {
+        "type": "object",
+        "properties": {
+          "policy_status": { "type": "string" },
+          "claim_status": { "type": "string" },
+          "settlement_aud": { "type": "number" }
+        }
+      },
+      "evidence": {
+        "type": "object",
+        "properties": {
+          "documents": { "type": "array", "items": { "type": "string" } },
+          "invoice_captions": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "other_assistance": {
+        "type": "object",
+        "properties": {
+          "grants_received": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "case": {
+        "type": "object",
+        "properties": {
+          "flags": { "type": "array", "items": { "type": "string" } },
+          "claimed_amount_aud": { "type": "number" }
+        }
+      }
+    }
+  },
+  "static_state": {
+    "policy": {
+      "declared_area_s11": "A business is in a declared area if its primary place of operation is in a local government area named in the disaster declaration for the event.",
+      "eligible_applicant_s12": "An applicant is eligible if the applicant owns the business, or holds written authority from the owner to apply on the owner's behalf.",
+      "small_business_s13": "A small business employs fewer than twenty full-time equivalent staff and has an annual turnover under ten million dollars.",
+      "registration_s14": "The business must have held an active ABN before the day the disaster event started.",
+      "direct_damage_s15": "Damage is direct if the disaster event caused it. Loss of trade, loss of custom, and a fall in demand are not direct damage.",
+      "eligible_costs_s16": "Eligible costs are clean-up, disposal of damaged stock, repair of premises, and replacement of damaged plant. Wages, rent, and insurance excesses are not eligible.",
+      "insurance_offset_s18": "The grant is reduced by the amount an insurer has paid or will pay for the same item. A pending claim must be resolved before payment.",
+      "no_duplication_s21": "The grant is not payable for a cost already met by another government grant for the same event.",
+      "evidence_guideline_4_2": "Evidence levels: none; the applicant's own statement only; third-party quotes or photographs; itemised invoices or receipts that cover the claimed costs.",
+      "escalation_guideline_6_1": "A senior assessor must see a case that shows a conflict of interest, a repeat claim for the same premises, or an amount above the delegate's limit."
+    }
+  },
+  "questions": {
+    "business_in_declared_area": {
+      "type": "noul",
+      "instructions": "Is the business's primary place of operation in a local government area named in `event.declared_lgas`, as `policy.declared_area_s11` requires?",
+      "criteria": {
+        "true": "The business location is one of the declared areas for this event.",
+        "false": "The business location is outside every declared area, or no declaration covers the event."
+      },
+      "cites": ["s11(1)", "s11(2)(a)"],
+      "required_paths": ["business.location_lga", "event.declared_lgas", "policy.declared_area_s11"]
+    },
+    "applicant_is_owner": {
+      "type": "noul",
+      "instructions": "Does `applicant.role` show that the applicant owns the business, or holds written authority to apply for the owner, as `policy.eligible_applicant_s12` requires?",
+      "cites": ["s12(1)"],
+      "required_paths": ["applicant.role", "policy.eligible_applicant_s12"]
+    },
+    "business_is_small": {
+      "type": "noul",
+      "instructions": "Do `business.employee_count` and `business.annual_turnover_aud` meet the small business test in `policy.small_business_s13`?",
+      "cites": ["s13(1)(a)", "s13(1)(b)"],
+      "required_paths": [
+        "business.employee_count",
+        "business.annual_turnover_aud",
+        "policy.small_business_s13"
+      ]
+    },
+    "abn_active_before_event": {
+      "type": "noul",
+      "instructions": "Was the ABN in `business.abn` active before `event.occurred_at`, as `policy.registration_s14` requires?",
+      "cites": ["s14(2)"],
+      "required_paths": [
+        "business.abn_registered_at",
+        "event.occurred_at",
+        "policy.registration_s14"
+      ],
+      "criteria": {
+        "true": "The ABN was registered and active before the day the event started.",
+        "false": "The ABN was registered on or after that day, or was not active."
+      }
+    },
+    "direct_damage_established": {
+      "type": "noul",
+      "instructions": "Does `damage.description` describe damage the event caused directly, and not lost trade, under `policy.direct_damage_s15`?",
+      "cites": ["s15(1)", "s15(3)"],
+      "required_paths": [
+        "damage.description",
+        "damage.photograph_captions",
+        "policy.direct_damage_s15"
+      ]
+    },
+    "costs_are_eligible": {
+      "type": "noul",
+      "instructions": "Is every item in `costs.items` an eligible cost under `policy.eligible_costs_s16`?",
+      "cites": ["s16(1)", "s16(4)"],
+      "required_paths": ["costs.items", "policy.eligible_costs_s16"]
+    },
+    "no_duplicate_assistance": {
+      "type": "noul",
+      "instructions": "Is every claimed cost free of another government grant for the same event, listed in `other_assistance.grants_received`, under `policy.no_duplication_s21`?",
+      "cites": ["s21(1)"],
+      "required_paths": ["other_assistance.grants_received", "policy.no_duplication_s21"]
+    },
+    "insurance_overlap": {
+      "type": "choice",
+      "instructions": "Which insurance position applies to the claimed costs, given `insurance.policy_status`, `insurance.claim_status`, and `insurance.settlement_aud`? Use `policy.insurance_offset_s18`.",
+      "criteria": {
+        "not_insured": "The business held no policy that covers the claimed items.",
+        "insured_no_claim": "A policy covers the items but the business has made no claim.",
+        "claim_pending": "A claim is open and the insurer has not decided it.",
+        "partially_settled": "The insurer has paid part of the claimed items.",
+        "fully_settled": "The insurer has paid, or will pay, every claimed item in full.",
+        "none_of_the_above": "The position does not fit any option above."
+      },
+      "no_match": "none_of_the_above",
+      "cites": ["s18(1)", "s18(2)"],
+      "required_paths": [
+        "insurance.policy_status",
+        "insurance.claim_status",
+        "policy.insurance_offset_s18"
+      ]
+    },
+    "evidence_quality": {
+      "type": "score",
+      "instructions": "How well do `evidence.documents` and `evidence.invoice_captions` substantiate the claimed costs? Use the levels in `policy.evidence_guideline_4_2`.",
+      "criteria": [
+        "No evidence of the claimed costs.",
+        "The applicant's own statement only.",
+        "Third-party quotes or photographs, but no invoices.",
+        "Itemised invoices or receipts that cover the claimed costs."
+      ],
+      "cites": ["Guideline 4.2"],
+      "required_paths": [
+        "evidence.documents",
+        "evidence.invoice_captions",
+        "policy.evidence_guideline_4_2"
+      ]
+    },
+    "needs_senior": {
+      "type": "noul",
+      "instructions": "Do `case.flags` and `case.claimed_amount_aud` show a case that a senior assessor must see under `policy.escalation_guideline_6_1`?",
+      "cites": ["Guideline 6.1"],
+      "required_paths": ["case.flags", "case.claimed_amount_aud", "policy.escalation_guideline_6_1"]
+    }
+  },
+  "routing": {
+    "rules": [
+      {
+        "when": { "question": "business_in_declared_area", "band": "no" },
+        "route": "auto_decline",
+        "reason": "the business is outside every declared area (s11)"
+      },
+      {
+        "when": { "question": "direct_damage_established", "band": "no" },
+        "route": "auto_decline",
+        "reason": "no direct damage from the event (s15)"
+      },
+      {
+        "when": { "question": "needs_senior", "band": "uncertain" },
+        "route": "assessor",
+        "reason": "escalation indicators are unclear (Guideline 6.1)"
+      },
+      {
+        "when": { "question": "insurance_overlap", "equals": "fully_settled" },
+        "route": "auto_decline",
+        "reason": "the insurer covers every claimed item in full (s18)"
+      },
+      {
+        "when": { "question": "insurance_overlap", "is_no_match": true },
+        "route": "assessor",
+        "reason": "the insurance position does not fit any option"
+      },
+      {
+        "when": { "question": "insurance_overlap", "confidence_below": true },
+        "route": "assessor",
+        "reason": "low confidence on the insurance position"
+      },
+      {
+        "when": { "question": "evidence_quality", "score_below": 2 },
+        "route": "request_info",
+        "reason": "evidence does not substantiate the claimed costs (Guideline 4.2)"
+      },
+      {
+        "when": { "question": "evidence_quality", "score_above": 2 },
+        "route": "auto_approve",
+        "reason": "itemised invoices cover the claimed costs (Guideline 4.2)"
+      }
+    ],
+    "default": "assessor"
+  },
+  "thresholds": { "lo": 0.3, "hi": 0.7, "conf_floor": 0.6 },
+  "model_pin": "jev-1.13.0",
+  "provenance": {
+    "corpus_hashes": {
+      "Disaster Recovery Small Business Grant Guidelines 2026": "sha256:3b8f0c1d2e4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c"
+    },
+    "golden_eval_id": "eval-fixture-0001",
+    "golden_eval_result": "pass",
+    "approved_by": "fixture-author",
+    "approved_at": "2026-09-19T00:00:00+00:00",
+    "origin_of_questions": {
+      "needs_senior": "authored from the escalation guideline for the plan 0002 fixture"
+    }
+  }
+}
