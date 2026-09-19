@@ -2,7 +2,7 @@
   "scheme": "disaster-grant",
   "version": "2026.9.1",
   "status": "published",
-  "content_hash": "sha256:768cc7b9bf3d51558b3d6ff6ca3fa4c3f1c0235e119e79c060d901ef4e46f9f6",
+  "content_hash": "sha256:c9371f59ee310d0267b4a84825a89e482655762c3a9d23ad873f4a801d41139c",
   "state_schema": {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "type": "object",
@@ -10,34 +10,66 @@
       "applicant": {
         "type": "object",
         "properties": {
-          "role": { "type": "string" },
-          "identity_verified": { "type": "boolean" }
+          "role": {
+            "type": "string"
+          },
+          "identity_verified": {
+            "type": "boolean"
+          }
         }
       },
       "business": {
         "type": "object",
         "properties": {
-          "abn": { "type": "string" },
-          "abn_registered_at": { "type": "string" },
-          "location_lga": { "type": "string" },
-          "employee_count": { "type": "number" },
-          "annual_turnover_aud": { "type": "number" }
+          "abn": {
+            "type": "string"
+          },
+          "abn_registered_at": {
+            "type": "string"
+          },
+          "location_lga": {
+            "type": "string"
+          },
+          "employee_count": {
+            "type": "number"
+          },
+          "annual_turnover_aud": {
+            "type": "number"
+          }
         }
       },
       "event": {
         "type": "object",
         "properties": {
-          "declaration_id": { "type": "string" },
-          "declared_lgas": { "type": "array", "items": { "type": "string" } },
-          "occurred_at": { "type": "string" }
+          "declaration_id": {
+            "type": "string"
+          },
+          "declared_lgas": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "occurred_at": {
+            "type": "string"
+          }
         }
       },
       "damage": {
         "type": "object",
         "properties": {
-          "description": { "type": "string" },
-          "photograph_captions": { "type": "array", "items": { "type": "string" } },
-          "claimed_cost_aud": { "type": "number" }
+          "description": {
+            "type": "string"
+          },
+          "photograph_captions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "claimed_cost_aud": {
+            "type": "number"
+          }
         }
       },
       "costs": {
@@ -48,8 +80,12 @@
             "items": {
               "type": "object",
               "properties": {
-                "description": { "type": "string" },
-                "amount_aud": { "type": "number" }
+                "description": {
+                  "type": "string"
+                },
+                "amount_aud": {
+                  "type": "number"
+                }
               }
             }
           }
@@ -58,29 +94,57 @@
       "insurance": {
         "type": "object",
         "properties": {
-          "policy_status": { "type": "string" },
-          "claim_status": { "type": "string" },
-          "settlement_aud": { "type": "number" }
+          "policy_status": {
+            "type": "string"
+          },
+          "claim_status": {
+            "type": "string"
+          },
+          "settlement_aud": {
+            "type": "number"
+          }
         }
       },
       "evidence": {
         "type": "object",
         "properties": {
-          "documents": { "type": "array", "items": { "type": "string" } },
-          "invoice_captions": { "type": "array", "items": { "type": "string" } }
+          "documents": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "invoice_captions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
         }
       },
       "other_assistance": {
         "type": "object",
         "properties": {
-          "grants_received": { "type": "array", "items": { "type": "string" } }
+          "grants_received": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
         }
       },
       "case": {
         "type": "object",
         "properties": {
-          "flags": { "type": "array", "items": { "type": "string" } },
-          "claimed_amount_aud": { "type": "number" }
+          "flags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "claimed_amount_aud": {
+            "type": "number"
+          }
         }
       }
     }
@@ -207,49 +271,85 @@
   "routing": {
     "rules": [
       {
-        "when": { "question": "business_in_declared_area", "band": "no" },
+        "when": {
+          "question": "business_in_declared_area",
+          "band": "no"
+        },
         "route": "auto_decline",
         "reason": "the business is outside every declared area (s11)"
       },
       {
-        "when": { "question": "direct_damage_established", "band": "no" },
+        "when": {
+          "question": "direct_damage_established",
+          "band": "no"
+        },
         "route": "auto_decline",
         "reason": "no direct damage from the event (s15)"
       },
       {
-        "when": { "question": "needs_senior", "band": "uncertain" },
+        "when": {
+          "question": "needs_senior",
+          "band": "uncertain"
+        },
         "route": "assessor",
         "reason": "escalation indicators are unclear (Guideline 6.1)"
       },
       {
-        "when": { "question": "insurance_overlap", "equals": "fully_settled" },
+        "when": {
+          "question": "needs_senior",
+          "band": "yes"
+        },
+        "route": "assessor",
+        "reason": "a senior assessor must see this case (Guideline 6.1)"
+      },
+      {
+        "when": {
+          "question": "insurance_overlap",
+          "equals": "fully_settled"
+        },
         "route": "auto_decline",
         "reason": "the insurer covers every claimed item in full (s18)"
       },
       {
-        "when": { "question": "insurance_overlap", "is_no_match": true },
+        "when": {
+          "question": "insurance_overlap",
+          "is_no_match": true
+        },
         "route": "assessor",
         "reason": "the insurance position does not fit any option"
       },
       {
-        "when": { "question": "insurance_overlap", "confidence_below": true },
+        "when": {
+          "question": "insurance_overlap",
+          "confidence_below": true
+        },
         "route": "assessor",
         "reason": "low confidence on the insurance position"
       },
       {
-        "when": { "question": "evidence_quality", "score_below": 2 },
+        "when": {
+          "question": "evidence_quality",
+          "score_below": 2
+        },
         "route": "request_info",
         "reason": "evidence does not substantiate the claimed costs (Guideline 4.2)"
       },
       {
-        "when": { "question": "evidence_quality", "score_above": 2 },
+        "when": {
+          "question": "evidence_quality",
+          "score_above": 2
+        },
         "route": "auto_approve",
         "reason": "itemised invoices cover the claimed costs (Guideline 4.2)"
       }
     ],
     "default": "assessor"
   },
-  "thresholds": { "lo": 0.3, "hi": 0.7, "conf_floor": 0.6 },
+  "thresholds": {
+    "lo": 0.3,
+    "hi": 0.7,
+    "conf_floor": 0.6
+  },
   "model_pin": "jev-1.13.0",
   "provenance": {
     "corpus_hashes": {

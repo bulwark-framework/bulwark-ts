@@ -15,7 +15,7 @@ invented for this fixture. They do not name real law.
 - Version: `2026.9.1`
 - Status: `published`
 - Model pin: `jev-1.13.0`
-- Content hash: `sha256:768cc7b9bf3d51558b3d6ff6ca3fa4c3f1c0235e119e79c060d901ef4e46f9f6`
+- Content hash: `sha256:c9371f59ee310d0267b4a84825a89e482655762c3a9d23ad873f4a801d41139c`
 
 The hash covers the rubric after the schema applies its defaults. It does not
 cover `status`, `provenance.approved_by`, `provenance.approved_at`, or
@@ -106,11 +106,12 @@ Noul. The quantum arithmetic that follows stays in code.
 Rules are evaluated in order. The first rule that matches sets the route.
 `routing.default` is `assessor`: a case that matches no rule goes to a person.
 
-| # | Condition | Route | Reason |
+| Index | Condition | Route | Reason |
 | --- | --- | --- | --- |
-| 1 | `business_in_declared_area` band `no` | `auto_decline` | The business is outside every declared area (s11). |
-| 2 | `direct_damage_established` band `no` | `auto_decline` | No direct damage from the event (s15). |
-| 3 | `needs_senior` band `uncertain` | `assessor` | Escalation indicators are unclear (Guideline 6.1). |
+| 0 | `business_in_declared_area` band `no` | `auto_decline` | The business is outside every declared area (s11). |
+| 1 | `direct_damage_established` band `no` | `auto_decline` | No direct damage from the event (s15). |
+| 2 | `needs_senior` band `uncertain` | `assessor` | Escalation indicators are unclear (Guideline 6.1). |
+| 3 | `needs_senior` band `yes` | `assessor` | A senior assessor must see this case (Guideline 6.1). |
 | 4 | `insurance_overlap` equals `fully_settled` | `auto_decline` | The insurer covers every claimed item in full (s18). |
 | 5 | `insurance_overlap` is no match | `assessor` | The insurance position does not fit any option. |
 | 6 | `insurance_overlap` confidence below the floor | `assessor` | Low confidence on the insurance position. |
