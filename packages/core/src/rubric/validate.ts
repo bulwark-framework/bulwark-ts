@@ -4,6 +4,7 @@
  * `validate` reports every schema violation at once, never just the first.
  * `validateWithHash` adds the content-hash check a store performs on read.
  */
+import { validateRouting } from "../resolver/validate-routing.js";
 import { HashMismatchError, InvalidRubricError, type RubricIssue } from "./errors.js";
 import { hash } from "./hash.js";
 import { type Rubric, rubricSchema } from "./schema.js";
@@ -21,7 +22,14 @@ function toPath(segments: readonly PropertyKey[]): string {
  */
 export function validate(input: unknown): Rubric {
   const result = rubricSchema.safeParse(input);
-  if (result.success) return result.data;
+  if (result.success) {
+    const issues = validateRouting(result.data).map(({ rule_index, reason }) => ({
+      path: rule_index === -1 ? "routing.default" : `routing.rules.${rule_index}`,
+      message: reason,
+    }));
+    if (issues.length > 0) throw new InvalidRubricError(issues);
+    return result.data;
+  }
   const issues: RubricIssue[] = result.error.issues.map((issue) => ({
     path: toPath(issue.path),
     message: issue.message,

@@ -1,0 +1,53 @@
+{
+  "business_in_declared_area": {
+    "type": "noul",
+    "p": 0.95
+  },
+  "applicant_is_owner": {
+    "type": "noul",
+    "p": 0.95
+  },
+  "business_is_small": {
+    "type": "noul",
+    "p": 0.95
+  },
+  "abn_active_before_event": {
+    "type": "noul",
+    "p": 0.95
+  },
+  "direct_damage_established": {
+    "type": "noul",
+    "p": 0.95
+  },
+  "costs_are_eligible": {
+    "type": "noul",
+    "p": 0.95
+  },
+  "no_duplicate_assistance": {
+    "type": "noul",
+    "p": 0.95
+  },
+  "needs_senior": {
+    "type": "noul",
+    "p": 0.05
+  },
+  "insurance_overlap": {
+    "type": "choice",
+    "label": "not_insured",
+    "confidence": 0.95,
+    "distribution": {
+      "not_insured": 0.95,
+      "insured_no_claim": 0.01,
+      "claim_pending": 0.01,
+      "partially_settled": 0.01,
+      "fully_settled": 0.01,
+      "none_of_the_above": 0.01
+    }
+  },
+  "evidence_quality": {
+    "type": "score",
+    "level": 1,
+    "confidence": 0.97,
+    "distribution": [0.01, 0.97, 0.01, 0.01]
+  }
+}

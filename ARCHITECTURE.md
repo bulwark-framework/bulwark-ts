@@ -1,6 +1,6 @@
 # Architecture
 
-Status: scaffolded. The rubric module (schema, validate, hash, errors) and the rubric store (interface, in-memory, file) are implemented; everything else is proposed. When a component lands, change its marker from "proposed" to "implemented" and link the entry point.
+Status: scaffolded. The rubric module (schema, validate, hash, errors) the rubric store (interface, in-memory, file), and the resolver are implemented; everything else is proposed. When a component lands, change its marker from "proposed" to "implemented" and link the entry point.
 
 ## System in one paragraph
 
@@ -45,7 +45,7 @@ Only `core` exists today (scaffolded 2026-09-19). Each other package arrives wit
 | Default multimodal intake | runtime | Agent loop over a facet's artefacts, each file with its own disposition. Tools: `read_document` (native PDF and image input), `ocr` (fallback through the OCR interface), `emit_fragment`. Word converted to PDF, text extraction as fallback. Model id is worker config. | `intake/src/` over `AgentRunner` | Agent runner; native PDF and image inputs; Word to PDF converter | proposed |
 | OCR interface | runtime | Non-LLM OCR boundary for scans the multimodal path cannot read. Interface only; no default implementation. Developers plug Textract, Azure Document Intelligence, or Tesseract. | `intake/src/ocr.ts` | TypeScript interface | proposed |
 | Decide activity | runtime | One `systemOne` call over merged state and pinned questions with pinned model. | `core/src/activities/` | `@typesafe-ai/sdk` | proposed |
-| Resolver | runtime | Pure function from answers and the rubric's routing rules to a route and reasons. Lives in workflow code. | `core/src/resolver/` | Plain TypeScript | proposed |
+| Resolver | runtime | Pure routing from answers and the rubric's rules to a route and reasons; merge facet fragments with static state. Lives in workflow code. | [`packages/core/src/resolver/`](packages/core/src/resolver/) (`resolve.ts`, `bands.ts`, `merge.ts`, `validate-routing.ts`) | Plain TypeScript | implemented (plan 0003) |
 | Bounded researcher | runtime | Agent proposes at most K extra questions when route is human. Same tool set and retriever as the authoring researcher. Output is advisory after human accept. | later, over `AgentRunner` | Agent runner plus retriever | proposed |
 | CLI | both | `bulwark compile`, `bulwark approve`, `bulwark assess`, registry queries. | later | `commander` | proposed |
 
@@ -78,7 +78,7 @@ The single shared contract. Fields: `scheme`, `version`, `status`, `content_hash
 
 - Workflow code imports nothing that does I/O. Activities own all I/O.
 - The registry is the only thing the two planes share. Runtime never calls compile-plane code.
-- The resolver imports only answer types and thresholds. It must be testable with fixtures and no network.
+- The resolver uses local answer types, band helpers, and rubric schema types and condition definitions. It must be testable with fixtures and no network.
 - Provider SDK types stop at the activity boundary. `core` depends on no agent SDK, vector store, or document parser.
 - Agents receive only Bulwark-defined tools. No filesystem, shell, or web access from inside an activity.
 - Tests that need a provider key skip without it. Tests that need Qdrant run against the CI container.
