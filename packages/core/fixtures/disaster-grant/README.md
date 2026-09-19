@@ -15,12 +15,31 @@ invented for this fixture. They do not name real law.
 - Version: `2026.9.1`
 - Status: `published`
 - Model pin: `jev-1.13.0`
-- Content hash: `sha256:c9371f59ee310d0267b4a84825a89e482655762c3a9d23ad873f4a801d41139c`
+- Content hash: `sha256:5613ef08e86de98f744028539489d917350385a4eb0e1a921fb185a2312e0611`
 
 The hash covers the rubric after the schema applies its defaults. It does not
 cover `status`, `provenance.approved_by`, `provenance.approved_at`, or
-`content_hash` itself. If you change the file, recompute the hash with
-`hash()` from `@bulwark-framework/core/rubric` and write the new value back.
+`content_hash` itself.
+
+[rubric.definition.ts](rubric.definition.ts) is the source of truth.
+Its Zod schema emits required fields and `additionalProperties: false`.
+[publish-fixture.ts](publish-fixture.ts) applies the fixture's published status and recorded provenance, then validates the artifact and recomputes its hash.
+This helper is a fixture publication step, not the production approval gate.
+The drift test checks both the object and its exact JSON bytes.
+Biome formatting excludes this generated file to preserve those bytes.
+
+To regenerate the published fixture, run these commands at the repository root:
+
+```sh
+pnpm --filter @bulwark-framework/core exec tsc -p tsconfig.json --noEmit false --outDir dist/fixture-build
+node --input-type=module <<'JS'
+import { writeFileSync } from "node:fs";
+import { publishedFixture } from "./packages/core/dist/fixture-build/fixtures/disaster-grant/publish-fixture.js";
+writeFileSync("packages/core/fixtures/disaster-grant/rubric.json", JSON.stringify(publishedFixture(), null, 2) + "\n");
+JS
+```
+
+Then update the content hash in this README and run `pnpm test`.
 
 ## Questions
 

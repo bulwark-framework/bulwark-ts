@@ -1,6 +1,6 @@
 # Architecture
 
-Status: scaffolded. The rubric module (schema, validate, hash, errors) the rubric store (interface, in-memory, file), and the resolver are implemented; everything else is proposed. When a component lands, change its marker from "proposed" to "implemented" and link the entry point.
+Status: scaffolded. The rubric module (schema, validate, hash, errors) the rubric store (interface, in-memory, file), the resolver, the typed authoring API, and `bulwark rubric build` are implemented; everything else is proposed. When a component lands, change its marker from "proposed" to "implemented" and link the entry point.
 
 ## System in one paragraph
 
@@ -33,6 +33,7 @@ Only `core` exists today (scaffolded 2026-09-19). Each other package arrives wit
 | Rubric store | shared | Interface with get-by-version, latest-published, put. In-memory and file implementations ship first; the registry service implements it later. | [`packages/core/src/store/`](packages/core/src/store/) (`types.ts` interface and `compareVersions`, `memory.ts`, `file.ts`) | TypeScript interface, in-memory and file adapters | implemented (plan 0002) |
 | Corpus store | shared | Content-hashed documents keyed by corpus hash. In-memory and file implementations ship first. | `core/src/store/` | TypeScript interface, in-memory and file adapters | proposed |
 | Rubric | shared | Schema, validation, content hash, declarative routing rules. | [`packages/core/src/rubric/`](packages/core/src/rubric/) (`schema.ts` schema and structural rules, `validate.ts`, `hash.ts`, `errors.ts`) | Zod, SHA-256 over canonical JSON | implemented (plan 0002); routing rule evaluation is the resolver, plan 0003 |
+| Authoring API | authoring | Typed defineRubric builder: Zod state schema, static state, thresholds, routing accessors keyed by question id. Serialises to the rubric artifact. | [packages/core/src/authoring/](packages/core/src/authoring/) | Zod toJSONSchema, TypeScript | implemented (plan 0007) |
 | Agent runner | shared | One interface for running an agent with Bulwark-defined tools and a required structured output. Built-in provider tools disabled; agents see only in-process MCP tools. | `core/src/agent/` interface; adapters in `activities-claude`, `activities-openai` | Claude Agent SDK (default), OpenAI Agents SDK; shared contract tests | proposed |
 | Index corpus workflow | authoring | Temporal workflow keyed by corpus hash: chunk by section, contextualise each chunk with the agent provider, embed, upsert dense plus sparse. Index ref recorded in rubric provenance. | `retrieval/src/workflows/` | LlamaIndex.TS ingestion; Qdrant hybrid (dense plus native BM25 sparse); embeddings pluggable, OpenAI `text-embedding-3` default | proposed |
 | Retriever | shared | Hybrid query, reciprocal-rank fusion, rerank. Exposed to agents as `retrieve` and `get_chunk` tools. | `retrieval/src/` | Qdrant hybrid query, Cohere rerank default, pluggable | proposed |
@@ -47,7 +48,7 @@ Only `core` exists today (scaffolded 2026-09-19). Each other package arrives wit
 | Decide activity | runtime | One `systemOne` call over merged state and pinned questions with pinned model. | `core/src/activities/` | `@typesafe-ai/sdk` | proposed |
 | Resolver | runtime | Pure routing from answers and the rubric's rules to a route and reasons; merge facet fragments with static state. Lives in workflow code. | [`packages/core/src/resolver/`](packages/core/src/resolver/) (`resolve.ts`, `bands.ts`, `merge.ts`, `validate-routing.ts`) | Plain TypeScript | implemented (plan 0003) |
 | Bounded researcher | runtime | Agent proposes at most K extra questions when route is human. Same tool set and retriever as the authoring researcher. Output is advisory after human accept. | later, over `AgentRunner` | Agent runner plus retriever | proposed |
-| CLI | both | `bulwark compile`, `bulwark approve`, `bulwark assess`, registry queries. | later | `commander` | proposed |
+| CLI | both | `bulwark rubric build`, `bulwark compile`, `bulwark approve`, `bulwark assess`, registry queries. | [packages/core/src/cli/](packages/core/src/cli/) | `commander` | rubric build implemented (plan 0007); compile, approve, assess proposed |
 
 ## Data flow
 
