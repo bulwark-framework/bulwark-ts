@@ -243,7 +243,33 @@ describe("rubric schema: structural rules", () => {
   });
 });
 
+describe("prototype-named questions", () => {
+  it("reports a rule that names a prototype property as unknown, not a TypeError", () => {
+    const input = loadExample();
+    input.routing.rules.push({
+      when: { question: "toString", band: "no" },
+      route: "assessor",
+      reason: "probe",
+    });
+    expect(messages(input).some((m) => m.includes('unknown question "toString"'))).toBe(true);
+  });
+});
+
 describe("path resolution", () => {
+  it("does not descend through a scalar-typed node", () => {
+    const schema = {
+      properties: { applicant: { properties: { role: { type: "string" } } } },
+    };
+    expect(pathResolves("applicant.role", schema, {})).toBe(true);
+    expect(pathResolves("applicant.role.nonexistent", schema, {})).toBe(false);
+    expect(pathResolves("applicant.extra", schema, {})).toBe(false);
+  });
+
+  it("still lets a path through an untyped, unconstrained node", () => {
+    const schema = { properties: { blob: {} } };
+    expect(pathResolves("blob.anything.deep", schema, {})).toBe(true);
+  });
+
   it("parses dot and index segments", () => {
     expect(parsePath("a.b[0].c[1][2]")).toEqual(["a", "b", 0, "c", 1, 2]);
     expect(parsePath("")).toEqual([]);
