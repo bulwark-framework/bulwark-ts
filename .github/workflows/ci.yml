@@ -20,3 +20,5 @@ jobs:
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test
+        env:
+          TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}
