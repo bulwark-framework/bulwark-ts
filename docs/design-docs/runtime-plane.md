@@ -84,7 +84,7 @@ The developer writes the workflow. Bulwark gives them the pipeline as one call a
 | --- | --- | --- |
 | `bulwarkActivities(options?)` | `proxyActivities<Activities>` with default timeouts and retry policy | Invariant 6 by construction: every side effect is behind a proxy |
 | `runAssessment(activities, { caseId, rubricRef, artefacts })` | Resolve once. Fan out intake with `Promise.all`. Merge with `static_state`. Decide. Resolve. Returns the pinned rubric, state, answers, model, usage, and resolution | Invariant 3: the rubric reference is consumed here and nowhere else |
-| `reassess(activities, pinned, previous, facets)` | Re-run intake for the named facets only, re-merge, re-decide, re-resolve | Invariant 3 by type: it takes the pinned rubric object, never a reference |
+| `reassess(activities, previous, facets)` | Re-run intake for the named facets only, re-merge over the previous state, re-decide, re-resolve | Invariant 3 by type: the pin and case id come from the previous result; there is no reference and no separate pin parameter |
 | `isAutomatic(resolution)` | Narrows to `auto_approve` or `auto_decline` | Uncertainty reaches a person: the resolver never returns an automatic route with an uncertain answer, so the human branch is the default arm of the developer's `switch` |
 | `createEvidenceBudget(max)` | A counter whose `consume()` throws past `max` | The evidence loop stays bounded |
 | `buildOutcomeRecord(result, decidedBy)` | The audit record from the spec, with workflow and run ids | One record per determination |

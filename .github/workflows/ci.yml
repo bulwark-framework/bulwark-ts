@@ -19,6 +19,11 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
       - run: pnpm typecheck
+      # The SDK defaults cached downloads to the system temporary directory.
+      - uses: actions/cache@v4
+        with:
+          path: /tmp/temporal-test-server-*
+          key: temporal-test-server-${{ runner.os }}-${{ runner.arch }}-1.24.0
       - run: pnpm test
         env:
           TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}
