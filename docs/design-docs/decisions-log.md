@@ -4,6 +4,20 @@ Dated. Newest first. Each entry says what was decided and why. Reversing a decis
 
 ## 2026-09-19
 
+**Out-of-the-box activities ship, behind interfaces.** Bulwark provides default Temporal activity implementations for the authoring researcher, the bounded runtime researcher, and intake, so adoption does not require a developer to write an LLM stack first. Every default sits behind an interface a developer can replace. Details in [ARCHITECTURE.md](../../ARCHITECTURE.md).
+
+**Agent providers: Claude Agent SDK default, OpenAI Agents SDK second, one interface.** An `AgentRunner` interface with two adapters and one shared contract-test suite. Both adapters must pass it before either ships. Agents see only Bulwark-defined in-process MCP tools; provider built-ins (shell, filesystem, web) are disabled inside activities. The Claude Agent SDK runs a subprocess and requires the CLI on the worker; accepted for the tool loop it gives the researcher. Rejected: the plain Messages API (no loop), the Vercel AI SDK (abstraction cost across tool-calling quirks).
+
+**Retrieval: contextual retrieval on LlamaIndex.TS, Qdrant hybrid default.** Chunk by section, contextualise each chunk with the agent provider, embed, store dense plus native BM25 sparse in Qdrant, fuse, rerank. Embeddings pluggable with OpenAI `text-embedding-3` default; Cohere rerank default. Indexing is its own `IndexCorpus` workflow keyed by corpus hash, and the index ref is recorded in rubric provenance. Rejected: whole-corpus-in-prompt (does not scale past one Act), Postgres (no native BM25 without an extension).
+
+**Intake: multimodal agent loop with an OCR interface.** Default intake is an agent over a facet's artefacts, each file with its own disposition. PDFs and images go to the model natively; Word is converted to PDF with text extraction as fallback. A non-LLM OCR interface is the fallback when the multimodal path cannot read a scan. No default OCR implementation ships.
+
+**Model id pinning.** Researcher and contextualiser model ids are recorded in rubric provenance because they shaped the questions. Intake model id is worker configuration because intake is developer-supplied and outside the pinned rubric. TypeSafe `model_pin` is unchanged.
+
+**pnpm workspace, scope `@bulwark-framework`.** Packages: `core`, `activities-claude`, `activities-openai`, `retrieval`, `intake`. `core` stays free of agent SDKs, vector stores, and document parsers. The scaffold plan lays down the workspace with `core` only. Rejected: one package with optional peers (install story hides a large dependency tree).
+
+**Live tests skip without keys; Qdrant runs in CI.** Provider and Cohere tests skip unless credentials are present. Qdrant runs as a CI service container so retrieval tests always run.
+
 **Toolchain: Node 22, pnpm, Vitest, Biome.** Temporal TypeScript workers require Node-API native modules, `worker_threads`, `vm`, `AsyncLocalStorage`, and `async_hooks`; Bun is unsupported for the worker in the official SDK (temporalio/sdk-typescript issues 1334 and 1618). The library exports Temporal primitives, so it targets the runtime its users have. Bun rejected to avoid two runtimes in one repo.
 
 **Library first.** One npm package exporting Temporal workflow and activity primitives, the rubric schema, the resolver, and a rubric store interface. No service, no HTTP, no CLI in the first slice.

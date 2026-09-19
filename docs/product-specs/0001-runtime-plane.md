@@ -60,7 +60,7 @@ Bulwark's runtime plane is an npm library that a developer registers in their ow
 
 ## Implementation Decisions
 
-**Package shape.** One npm package. Public entry points: rubric (schema, validate, hash), resolver (rules engine, band helpers), workflows (assess case, assessor review), activities (a factory that takes the developer's dependencies and returns Temporal activity implementations), store (interface plus in-memory and file implementations). Workflows are exported from a module that imports nothing with side effects, so it can be bundled into the Temporal workflow sandbox.
+**Package shape.** One npm package, `@bulwark-framework/core`, inside a pnpm workspace (decided 2026-09-19; out-of-the-box activity packages come later and are out of scope here). Public entry points: rubric (schema, validate, hash), resolver (rules engine, band helpers), workflows (assess case, assessor review), activities (a factory that takes the developer's dependencies and returns Temporal activity implementations), store (interface plus in-memory and file implementations). Workflows are exported from a module that imports nothing with side effects, so it can be bundled into the Temporal workflow sandbox.
 
 **Toolchain.** Node 22, pnpm, TypeScript strict, Vitest, Biome. Temporal workers do not run on Bun; the library targets what its users run.
 
