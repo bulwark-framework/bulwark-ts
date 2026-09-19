@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 640" width="1120" height="640" font-family="IBM Plex Sans, system-ui, -apple-system, Segoe UI, sans-serif" role="img" aria-label="Who authors each part of a rubric. Three authors on the left: the scheme owner with the developer, researcher agents, and the compile workflow. Six rubric parts in the middle: state_schema and static_state, questions, routing and thresholds, model_pin, provenance, and content_hash. Arrows connect each author to the parts it writes. On the right, three gates every rubric passes before it is published: compiler and schema validation, the eval gate over the golden set, and a named human approval. A footer states that researchers never write routing and never answer questions.">
+  <title>Who authors each part of a rubric</title>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1C2430"/></marker>
+    <marker id="arrO" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#A85E1C"/></marker>
+    <marker id="arrG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#6B7480"/></marker>
+    <marker id="arrB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1F5FA8"/></marker>
+  </defs>
+  <style>
+    .t { fill: #1C2430; font-size: 13px; }
+    .h { fill: #1C2430; font-size: 16px; font-weight: 600; }
+    .b { fill: #1C2430; font-size: 14px; font-weight: 600; }
+    .s { fill: #6B7480; font-size: 12px; }
+    .m { font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; fill: #1C2430; }
+    .w { fill: #FFFFFF; font-size: 13px; font-weight: 600; }
+  </style>
+
+  <text x="40" y="38" class="h" font-size="22">Who authors each part of a rubric</text>
+  <text x="40" y="60" class="s">Left: who writes. Middle: the rubric fields. Right: the gates every version passes before it is published.</text>
+
+  <!-- Column headers -->
+  <text x="40" y="100" class="b">Authors</text>
+  <text x="440" y="100" class="b">Rubric fields</text>
+  <text x="820" y="100" class="b">Gates, in order</text>
+
+  <!-- Authors -->
+  <rect x="40" y="120" width="300" height="96" rx="8" fill="#EEF0F3" stroke="#6B7480" stroke-width="2"/>
+  <text x="56" y="146" class="b">Scheme owner, with the developer</text>
+  <text x="56" y="168" class="t">Knows the policy. Writes routing and</text>
+  <text x="56" y="186" class="t">thresholds. Declares the state shape the</text>
+  <text x="56" y="204" class="t">intake adapters must produce.</text>
+
+  <rect x="40" y="250" width="300" height="96" rx="8" fill="#FBEFE3" stroke="#A85E1C" stroke-width="2"/>
+  <text x="56" y="276" class="b">Researcher agents</text>
+  <text x="56" y="298" class="t">LLM plus retrieval over the corpus. Emit</text>
+  <text x="56" y="316" class="t">candidate questions with a citation and</text>
+  <text x="56" y="334" class="t">required state paths. Never answer them.</text>
+
+  <rect x="40" y="380" width="300" height="96" rx="8" fill="#E6EEF9" stroke="#1F5FA8" stroke-width="2"/>
+  <text x="56" y="406" class="b">Compile workflow</text>
+  <text x="56" y="428" class="t">Temporal. Assembles the artifact, records</text>
+  <text x="56" y="446" class="t">provenance, computes the hash, pins the</text>
+  <text x="56" y="464" class="t">model. Writes no policy of its own.</text>
+
+  <!-- Rubric fields -->
+  <rect x="440" y="120" width="300" height="52" rx="8" fill="#FFFFFF" stroke="#1C2430" stroke-width="2"/>
+  <text x="456" y="142" class="m">state_schema  static_state</text>
+  <text x="456" y="162" class="s">the shape of a case, and fixed policy text</text>
+
+  <rect x="440" y="186" width="300" height="52" rx="8" fill="#FFFFFF" stroke="#1C2430" stroke-width="2"/>
+  <text x="456" y="208" class="m">routing  thresholds</text>
+  <text x="456" y="228" class="s">ordered rules, default route, lo, hi, conf_floor</text>
+
+  <rect x="440" y="252" width="300" height="52" rx="8" fill="#FFFFFF" stroke="#1C2430" stroke-width="2"/>
+  <text x="456" y="274" class="m">questions</text>
+  <text x="456" y="294" class="s">Noul, Choice, Score with criteria and cites</text>
+
+  <rect x="440" y="318" width="300" height="52" rx="8" fill="#FFFFFF" stroke="#1C2430" stroke-width="2"/>
+  <text x="456" y="340" class="m">model_pin</text>
+  <text x="456" y="360" class="s">exact model id the eval gate ran against</text>
+
+  <rect x="440" y="384" width="300" height="52" rx="8" fill="#FFFFFF" stroke="#1C2430" stroke-width="2"/>
+  <text x="456" y="406" class="m">provenance</text>
+  <text x="456" y="426" class="s">corpus hashes, eval result, approver</text>
+
+  <rect x="440" y="450" width="300" height="52" rx="8" fill="#FFFFFF" stroke="#1C2430" stroke-width="2"/>
+  <text x="456" y="472" class="m">content_hash  version  status</text>
+  <text x="456" y="492" class="s">identity and lifecycle; never hand-written</text>
+
+  <!-- Author -> field arrows -->
+  <line x1="340" y1="150" x2="438" y2="146" stroke="#6B7480" stroke-width="2" marker-end="url(#arrG)"/>
+  <line x1="340" y1="180" x2="438" y2="212" stroke="#6B7480" stroke-width="2" marker-end="url(#arrG)"/>
+  <line x1="340" y1="298" x2="438" y2="278" stroke="#A85E1C" stroke-width="2" marker-end="url(#arrO)"/>
+  <line x1="340" y1="410" x2="438" y2="344" stroke="#1F5FA8" stroke-width="2" marker-end="url(#arrB)"/>
+  <line x1="340" y1="428" x2="438" y2="410" stroke="#1F5FA8" stroke-width="2" marker-end="url(#arrB)"/>
+  <line x1="340" y1="446" x2="438" y2="476" stroke="#1F5FA8" stroke-width="2" marker-end="url(#arrB)"/>
+
+  <!-- Gates -->
+  <rect x="820" y="120" width="260" height="90" rx="8" fill="#FFFFFF" stroke="#1C2430" stroke-width="2"/>
+  <rect x="820" y="120" width="260" height="28" rx="8" fill="#1C2430"/>
+  <text x="950" y="140" class="w" text-anchor="middle">1  Compiler and schema</text>
+  <text x="834" y="166" class="t">Every issue reported. Paths resolve,</text>
+  <text x="834" y="184" class="t">no-match labels exist, rules fit their</text>
+  <text x="834" y="202" class="t">question, default is not auto_decline.</text>
+
+  <rect x="820" y="230" width="260" height="90" rx="8" fill="#E3F3F0" stroke="#1F7A6B" stroke-width="2"/>
+  <rect x="820" y="230" width="260" height="28" rx="8" fill="#1F7A6B"/>
+  <text x="950" y="250" class="w" text-anchor="middle">2  Eval gate</text>
+  <text x="834" y="276" class="t">Golden set through TypeSafe N times.</text>
+  <text x="834" y="294" class="t">Routes agree, answers stable, no</text>
+  <text x="834" y="312" class="t">regression. Tests the routing as written.</text>
+
+  <rect x="820" y="340" width="260" height="90" rx="8" fill="#EEF0F3" stroke="#6B7480" stroke-width="2"/>
+  <rect x="820" y="340" width="260" height="28" rx="8" fill="#6B7480"/>
+  <text x="950" y="360" class="w" text-anchor="middle">3  Named human approves</text>
+  <text x="834" y="386" class="t">Sees the diff, the eval report, and</text>
+  <text x="834" y="404" class="t">citations. Signal records approved_by</text>
+  <text x="834" y="422" class="t">and approved_at. Status → published.</text>
+
+  <line x1="740" y1="300" x2="818" y2="170" stroke="#1C2430" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="770" y="226" class="s" text-anchor="middle">draft</text>
+  <line x1="950" y1="210" x2="950" y2="228" stroke="#1C2430" stroke-width="2" marker-end="url(#arr)"/>
+  <line x1="950" y1="320" x2="950" y2="338" stroke="#1C2430" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- Footer -->
+  <rect x="40" y="540" width="1040" height="70" rx="8" fill="#E6EEF9" stroke="#1F5FA8" stroke-width="2"/>
+  <text x="60" y="566" class="b">Two lines the agents never cross</text>
+  <text x="60" y="588" class="t">Researchers formulate questions and cite the rule for each. They never answer a question, and they never write a route or a threshold.</text>
+  <text x="60" y="604" class="t">Routing is policy, so a person writes it, the eval gate tests it, and a named human approves it. Only code applies it at runtime.</text>
+</svg>

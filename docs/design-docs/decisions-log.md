@@ -44,6 +44,10 @@ Dated. Newest first. Each entry says what was decided and why. Reversing a decis
 
 **Research moves to an authoring plane.** Compile once per scheme change, serve versions from a registry, never regenerate questions per case. Reason: closes the researcher-drift risk from the first design and shortens the runtime path to one model judgment.
 
+**Routing and the state schema are authored by people, never by agents.** Researchers emit questions only. The scheme owner writes `routing`, `thresholds`, `state_schema`, and `static_state`; the compile workflow writes `provenance`, `model_pin`, and `content_hash`. Reason: routing is policy and must have a named human author; the state schema is the contract with developer-written intake adapters and cannot change per compile; an agent writing both questions and routing could tune one to the other and pass the eval gate. See [rubric-authorship.md](rubric-authorship.md). Recorded 2026-09-19.
+
+**Code-first authoring, artifact-first runtime.** Developers author the state schema (Zod), static state, thresholds, and routing in TypeScript through a typed `defineRubric` builder. The builder serialises to the JSON rubric artifact, which stays the unit that is hashed, eval-gated, approved, pinned, and shared with the Python runtime. Routing never moves into runtime code. Reason: types, autocomplete on question ids, refactors, and unit tests for authors; pinning, eval coverage, named approval, and portability for the runtime. See [rubric-authorship.md](rubric-authorship.md) and plan 0007. Recorded 2026-09-19.
+
 ## Open
 
 **LLM provider for researcher and intake.** Claude is the default candidate. Provider stays behind the activity boundary either way.

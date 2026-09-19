@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Harness drift check. Verifies required paths exist, AGENTS.md stays under the
-# line limit, and every relative markdown link resolves. Does not check heading
+# line limit, and every relative markdown link resolves from its file or the repo root. Does not check heading
 # anchors or whether content is current.
 set -u
 cd "$(dirname "$0")/.."
@@ -30,7 +30,9 @@ while IFS= read -r file; do
       http://*|https://*|mailto:*|\#*) continue ;;
     esac
     path="${target%%#*}"
-    [ -e "$dir/$path" ] || echo "broken link in $file: $target"
+    # A link resolves from the file (GitHub) or from the repo root (the Code
+    # tab markdown preview, used for image embeds in docs/design-docs).
+    [ -e "$dir/$path" ] || [ -e "./$path" ] || echo "broken link in $file: $target"
   done
 done < <(find . -name '*.md' -not -path './node_modules/*' -not -path './.git/*') | tee /tmp/bulwark-harness-links.txt
 [ -s /tmp/bulwark-harness-links.txt ] && fail=1

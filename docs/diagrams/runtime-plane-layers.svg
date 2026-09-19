@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 620" width="1120" height="620" font-family="IBM Plex Sans, system-ui, -apple-system, Segoe UI, sans-serif" role="img" aria-label="Runtime plane layers. Five stacked layers from bottom to top: plan 0002 rubric core and stores (implemented), plan 0003 resolver (implemented), plan 0004 activities (planned), plan 0005 assess workflow (planned), plan 0006 assessor review and evidence loop (planned). Each layer lists its modules and the exec plan that owns it. Arrows show that each layer depends only on the layers below it. A side column shows what a developer can do once each layer ships.">
+  <title>Runtime plane layers</title>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1C2430"/></marker>
+  </defs>
+  <style>
+    .t { fill: #1C2430; font-size: 14px; }
+    .h { fill: #1C2430; font-size: 17px; font-weight: 600; }
+    .s { fill: #6B7480; font-size: 13px; }
+    .m { font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; fill: #1C2430; }
+    .done { fill: #1F5FA8; font-size: 12px; font-weight: 600; }
+    .plan { fill: #6B7480; font-size: 12px; font-weight: 600; }
+  </style>
+
+  <text x="40" y="40" class="h" font-size="22">Runtime plane: one layer per exec plan</text>
+  <text x="40" y="62" class="s">Each layer imports only from the layers below it. Filled boxes are merged or in review; outlined boxes are planned.</text>
+
+  <!-- Layer 0006 -->
+  <rect x="40" y="90" width="700" height="86" rx="8" fill="#FFFFFF" stroke="#6B7480" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="60" y="116" class="h">0006  Assessor review and evidence loop</text>
+  <text x="60" y="140" class="m">workflows/assessor-review.ts   signals.ts   evidence loop in assess-case.ts</text>
+  <text x="60" y="162" class="s">Child workflow, three Signals, SLA timer, escalation, proposals slot.</text>
+  <text x="690" y="116" class="plan" text-anchor="end">planned</text>
+
+  <!-- Layer 0005 -->
+  <rect x="40" y="190" width="700" height="86" rx="8" fill="#FFFFFF" stroke="#6B7480" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="60" y="216" class="h">0005  Assess workflow</text>
+  <text x="60" y="240" class="m">workflows/assess-case.ts   workflows/types.ts   test/helpers/env.ts</text>
+  <text x="60" y="262" class="s">Deterministic AssessCase: pin once, intake fan-out, merge, decide, route. Search attributes.</text>
+  <text x="690" y="216" class="plan" text-anchor="end">planned</text>
+
+  <!-- Layer 0004 -->
+  <rect x="40" y="290" width="700" height="86" rx="8" fill="#FFFFFF" stroke="#6B7480" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="60" y="316" class="h">0004  Activities</text>
+  <text x="60" y="340" class="m">activities/factory.ts   resolve-rubric.ts   intake.ts   decide/   failures.ts</text>
+  <text x="60" y="362" class="s">Every model call and every I/O. Wraps 0002 errors as non-retryable ApplicationFailure.</text>
+  <text x="690" y="316" class="plan" text-anchor="end">planned</text>
+
+  <!-- Layer 0003 -->
+  <rect x="40" y="390" width="700" height="86" rx="8" fill="#E6EEF9" stroke="#1F5FA8" stroke-width="2"/>
+  <text x="60" y="416" class="h">0003  Resolver</text>
+  <text x="60" y="440" class="m">resolver/resolve.ts   bands.ts   validate-routing.ts   merge.ts   answers.ts</text>
+  <text x="60" y="462" class="s">Pure code. Uncertainty floor, first-match rules, default route. No node:*, no Temporal, no TypeSafe.</text>
+  <text x="690" y="416" class="done" text-anchor="end">in review, PR #5</text>
+
+  <!-- Layer 0002 -->
+  <rect x="40" y="490" width="700" height="86" rx="8" fill="#E6EEF9" stroke="#1F5FA8" stroke-width="2"/>
+  <text x="60" y="516" class="h">0002  Rubric core and stores</text>
+  <text x="60" y="540" class="m">rubric/schema.ts   validate.ts   hash.ts   errors.ts   store/memory.ts   store/file.ts</text>
+  <text x="60" y="562" class="s">Zod schema, every-issue validation, SHA-256 over canonical JSON, typed errors, versioned stores.</text>
+  <text x="690" y="516" class="done" text-anchor="end">in review, PR #4</text>
+
+  <!-- dependency arrows (upper depends on lower) -->
+  <line x1="390" y1="190" x2="390" y2="178" stroke="#1C2430" stroke-width="2" marker-end="url(#arr)"/>
+  <line x1="390" y1="290" x2="390" y2="278" stroke="#1C2430" stroke-width="2" marker-end="url(#arr)"/>
+  <line x1="390" y1="390" x2="390" y2="378" stroke="#1C2430" stroke-width="2" marker-end="url(#arr)"/>
+  <line x1="390" y1="490" x2="390" y2="478" stroke="#1C2430" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="400" y="186" class="s">uses</text>
+  <text x="400" y="286" class="s">uses</text>
+  <text x="400" y="386" class="s">uses</text>
+  <text x="400" y="486" class="s">uses</text>
+
+  <!-- Right column: what a developer can do -->
+  <text x="780" y="116" class="h" font-size="15">What ships with each layer</text>
+  <text x="780" y="150" class="t">Humans decide uncertain cases. New evidence</text>
+  <text x="780" y="170" class="t">re-runs intake. Unattended cases escalate.</text>
+
+  <text x="780" y="230" class="t">A case runs end to end on the automatic routes</text>
+  <text x="780" y="250" class="t">inside the developer's own Temporal worker.</text>
+
+  <text x="780" y="330" class="t">The three activities are unit-tested without</text>
+  <text x="780" y="350" class="t">Temporal. One live TypeSafe test proves decide.</text>
+
+  <text x="780" y="430" class="t">A scheme owner tests routing rules against fixture</text>
+  <text x="780" y="450" class="t">answers with no network.</text>
+
+  <text x="780" y="530" class="t">A developer validates, hashes, and loads rubric</text>
+  <text x="780" y="550" class="t">files with no Temporal and no TypeSafe.</text>
+
+  <!-- Legend -->
+  <rect x="40" y="596" width="14" height="14" fill="#E6EEF9" stroke="#1F5FA8" stroke-width="2"/>
+  <text x="62" y="608" class="s">implemented, in review</text>
+  <rect x="220" y="596" width="14" height="14" fill="#FFFFFF" stroke="#6B7480" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="242" y="608" class="s">planned</text>
+</svg>
