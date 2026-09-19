@@ -40,6 +40,10 @@
     "./authoring": {
       "types": "./dist/authoring/index.d.ts",
       "default": "./dist/authoring/index.js"
+    },
+    "./testing": {
+      "types": "./dist/testing/index.d.ts",
+      "default": "./dist/testing/index.js"
     }
   },
   "files": [
@@ -68,5 +72,17 @@
   },
   "bin": {
     "bulwark": "./dist/cli/index.js"
+  },
+  "peerDependencies": {
+    "@temporalio/testing": "1.24.0",
+    "@temporalio/worker": "1.24.0"
+  },
+  "peerDependenciesMeta": {
+    "@temporalio/testing": {
+      "optional": true
+    },
+    "@temporalio/worker": {
+      "optional": true
+    }
   }
 }
