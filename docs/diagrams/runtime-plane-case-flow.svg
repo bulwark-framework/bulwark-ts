@@ -1,0 +1,148 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 800" width="1120" height="800" font-family="IBM Plex Sans, system-ui, -apple-system, Segoe UI, sans-serif" role="img" aria-label="One case through the runtime plane. External services sit above the workflow: the rubric store and TypeSafe System One. The AssessCase workflow runs left to right: resolve rubric activity reads the rubric store, verifies the hash, and pins one version. Intake activities run in parallel, one per facet, validated against the rubric state schema. Merge is pure workflow code that applies static state last. The decide activity makes one TypeSafe systemOne call and maps the answers. The resolver is pure workflow code that returns a route and reasons. Automatic routes finalise the case. The assessor route starts the AssessorReview child workflow, which waits on decision or requestInfo Signals with an SLA timer. The request_info route waits for an evidence Signal, then loops back to intake for the named facets only, bounded by maxEvidenceLoops. The assessor's client sits below the workflow and sends Signals. Colour marks the owner: blue rubric store, violet intake, teal TypeSafe, grey human, black plain code.">
+  <title>One case through the runtime plane</title>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1C2430"/></marker>
+    <marker id="arrG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#6B7480"/></marker>
+    <marker id="arrB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1F5FA8"/></marker>
+    <marker id="arrT" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1F7A6B"/></marker>
+  </defs>
+  <style>
+    .t { fill: #1C2430; font-size: 12.5px; }
+    .h { fill: #1C2430; font-size: 16px; font-weight: 600; }
+    .b { fill: #1C2430; font-size: 14px; font-weight: 600; }
+    .s { fill: #6B7480; font-size: 12px; }
+    .m { font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; fill: #1C2430; }
+    .w { fill: #FFFFFF; font-size: 13px; font-weight: 600; }
+  </style>
+
+  <text x="40" y="38" class="h" font-size="22">One case through the runtime plane</text>
+  <text x="40" y="60" class="s">Boxes with a plan number are Temporal activities (0004) or workflow steps (0005, 0006). Pure code never leaves the workflow.</text>
+
+  <!-- External services above the workflow -->
+  <rect x="60" y="80" width="170" height="52" rx="8" fill="#E6EEF9" stroke="#1F5FA8" stroke-width="2"/>
+  <text x="145" y="102" class="b" text-anchor="middle">Rubric store</text>
+  <text x="145" y="121" class="s" text-anchor="middle">memory or file (0002)</text>
+  <line x1="145" y1="132" x2="145" y2="208" stroke="#1F5FA8" stroke-width="2" stroke-dasharray="4 4" marker-end="url(#arrB)"/>
+
+  <rect x="690" y="80" width="170" height="52" rx="8" fill="#E3F3F0" stroke="#1F7A6B" stroke-width="2"/>
+  <text x="775" y="102" class="b" text-anchor="middle">TypeSafe System One</text>
+  <text x="775" y="121" class="s" text-anchor="middle">key from the worker env only</text>
+  <line x1="775" y1="132" x2="775" y2="208" stroke="#1F7A6B" stroke-width="2" stroke-dasharray="4 4" marker-end="url(#arrT)"/>
+
+  <!-- Workflow boundary -->
+  <rect x="40" y="150" width="1040" height="420" rx="12" fill="#FFFFFF" stroke="#1C2430" stroke-width="2"/>
+  <text x="300" y="176" class="h">AssessCase workflow</text>
+  <text x="520" y="176" class="m">workflows/assess-case.ts (0005)</text>
+  <text x="1060" y="176" class="s" text-anchor="end">deterministic: imports only resolver, merge, and types</text>
+
+  <!-- Step 1: resolve rubric -->
+  <rect x="60" y="210" width="170" height="110" rx="8" fill="#E6EEF9" stroke="#1F5FA8" stroke-width="2"/>
+  <text x="145" y="234" class="b" text-anchor="middle">1  resolveRubric</text>
+  <text x="145" y="252" class="s" text-anchor="middle">activity (0004)</text>
+  <text x="70" y="276" class="t">get or latestPublished,</text>
+  <text x="70" y="293" class="t">verify the content hash,</text>
+  <text x="70" y="310" class="t">pin scheme@version once</text>
+
+  <!-- Step 2: intake fan-out -->
+  <rect x="270" y="210" width="190" height="110" rx="8" fill="#EEF0F3" stroke="#5D4AB3" stroke-width="2"/>
+  <text x="365" y="234" class="b" text-anchor="middle">2  intake × facets</text>
+  <text x="365" y="252" class="s" text-anchor="middle">activities, Promise.all (0004)</text>
+  <text x="280" y="276" class="t">One activity per facet.</text>
+  <text x="280" y="293" class="t">Fragment validated against</text>
+  <text x="280" y="310" class="t">the facet's state schema.</text>
+
+  <!-- Step 3: merge -->
+  <rect x="500" y="210" width="150" height="110" rx="8" fill="#FFFFFF" stroke="#1C2430" stroke-width="2"/>
+  <text x="575" y="234" class="b" text-anchor="middle">3  merge</text>
+  <text x="575" y="252" class="s" text-anchor="middle">pure, in workflow (0003)</text>
+  <text x="510" y="276" class="t">Deep-merge fragments,</text>
+  <text x="510" y="293" class="t">static_state applied last.</text>
+  <text x="510" y="310" class="t">A facet never wins.</text>
+
+  <!-- Step 4: decide -->
+  <rect x="690" y="210" width="170" height="110" rx="8" fill="#E3F3F0" stroke="#1F7A6B" stroke-width="2"/>
+  <text x="775" y="234" class="b" text-anchor="middle">4  decide</text>
+  <text x="775" y="252" class="s" text-anchor="middle">activity (0004)</text>
+  <text x="700" y="276" class="t">Re-verify the hash. One</text>
+  <text x="700" y="293" class="t">systemOne call, every</text>
+  <text x="700" y="310" class="t">question, at model_pin.</text>
+
+  <!-- Step 5: resolve -->
+  <rect x="900" y="210" width="160" height="110" rx="8" fill="#FFFFFF" stroke="#1C2430" stroke-width="2"/>
+  <text x="980" y="234" class="b" text-anchor="middle">5  resolve</text>
+  <text x="980" y="252" class="s" text-anchor="middle">pure, in workflow (0003)</text>
+  <text x="910" y="276" class="t">Uncertain set, then first</text>
+  <text x="910" y="293" class="t">matching rule, then the</text>
+  <text x="910" y="310" class="t">default. Route + reasons.</text>
+
+  <!-- arrows between steps, labels above the gap -->
+  <line x1="230" y1="265" x2="268" y2="265" stroke="#1C2430" stroke-width="2" marker-end="url(#arr)"/>
+  <line x1="460" y1="265" x2="498" y2="265" stroke="#1C2430" stroke-width="2" marker-end="url(#arr)"/>
+  <line x1="650" y1="265" x2="688" y2="265" stroke="#1C2430" stroke-width="2" marker-end="url(#arr)"/>
+  <line x1="860" y1="265" x2="898" y2="265" stroke="#1C2430" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="249" y="202" class="s" text-anchor="middle">rubric</text>
+  <text x="479" y="202" class="s" text-anchor="middle">fragments</text>
+  <text x="669" y="202" class="s" text-anchor="middle">state</text>
+  <text x="879" y="202" class="s" text-anchor="middle">answers</text>
+
+  <!-- Route fan-out from resolve -->
+  <line x1="980" y1="320" x2="980" y2="360" stroke="#1C2430" stroke-width="2"/>
+  <line x1="150" y1="360" x2="980" y2="360" stroke="#1C2430" stroke-width="2"/>
+  <text x="565" y="352" class="s" text-anchor="middle">route</text>
+
+  <!-- auto routes -->
+  <line x1="150" y1="360" x2="150" y2="398" stroke="#1C2430" stroke-width="2" marker-end="url(#arr)"/>
+  <rect x="60" y="400" width="180" height="70" rx="8" fill="#FFFFFF" stroke="#1C2430" stroke-width="2"/>
+  <text x="150" y="426" class="b" text-anchor="middle">auto_approve</text>
+  <text x="150" y="446" class="b" text-anchor="middle">auto_decline</text>
+  <text x="150" y="464" class="s" text-anchor="middle">decidedBy: system</text>
+
+  <!-- assessor route -->
+  <line x1="470" y1="360" x2="470" y2="398" stroke="#1C2430" stroke-width="2" marker-end="url(#arr)"/>
+  <rect x="330" y="400" width="280" height="130" rx="8" fill="#EEF0F3" stroke="#6B7480" stroke-width="2"/>
+  <text x="470" y="426" class="b" text-anchor="middle">assessor  →  AssessorReview child</text>
+  <text x="470" y="444" class="s" text-anchor="middle">workflows/assessor-review.ts (0006)</text>
+  <text x="345" y="468" class="t">Input: state, answers, resolution, proposals.</text>
+  <text x="345" y="486" class="t">Signals: decision, requestInfo. Query: status.</text>
+  <text x="345" y="504" class="t">SLA timer → escalated, keeps waiting.</text>
+  <text x="345" y="522" class="t">Never touches an activity.</text>
+
+  <!-- request_info route -->
+  <line x1="800" y1="360" x2="800" y2="398" stroke="#1C2430" stroke-width="2" marker-end="url(#arr)"/>
+  <rect x="680" y="400" width="240" height="130" rx="8" fill="#FFFFFF" stroke="#1C2430" stroke-width="2"/>
+  <text x="800" y="426" class="b" text-anchor="middle">request_info</text>
+  <text x="800" y="444" class="s" text-anchor="middle">evidence loop (0006)</text>
+  <text x="695" y="468" class="t">Wait for an evidence Signal that</text>
+  <text x="695" y="486" class="t">names facets. Re-run intake for</text>
+  <text x="695" y="504" class="t">those only, re-merge, re-decide.</text>
+  <text x="695" y="522" class="t">Bounded by maxEvidenceLoops (3).</text>
+
+  <!-- requestInfo from child goes to request_info box -->
+  <line x1="610" y1="465" x2="678" y2="465" stroke="#6B7480" stroke-width="2" marker-end="url(#arrG)"/>
+  <text x="644" y="456" class="s" text-anchor="middle">requestInfo</text>
+
+  <!-- evidence loop back to intake -->
+  <path d="M 920 480 L 1070 480 L 1070 195 L 365 195 L 365 208" fill="none" stroke="#6B7480" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arrG)"/>
+  <text x="1060" y="385" class="s" text-anchor="end">evidence Signal: named facets only</text>
+
+  <!-- Finalise -->
+  <line x1="150" y1="470" x2="150" y2="508" stroke="#1C2430" stroke-width="2" marker-end="url(#arr)"/>
+  <line x1="470" y1="530" x2="470" y2="550" stroke="#1C2430" stroke-width="2"/>
+  <line x1="240" y1="550" x2="470" y2="550" stroke="#1C2430" stroke-width="2"/>
+  <line x1="240" y1="550" x2="240" y2="525" stroke="#1C2430" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="360" y="544" class="s" text-anchor="middle">decision: decidedBy identity</text>
+  <rect x="60" y="510" width="180" height="30" rx="6" fill="#1C2430"/>
+  <text x="150" y="530" class="w" text-anchor="middle">outcome record</text>
+
+  <!-- Assessor client below the workflow -->
+  <rect x="330" y="600" width="280" height="52" rx="8" fill="#EEF0F3" stroke="#6B7480" stroke-width="2"/>
+  <text x="470" y="622" class="b" text-anchor="middle">Assessor, via the developer's client</text>
+  <text x="470" y="641" class="s" text-anchor="middle">sends Signals with the exported handles</text>
+  <line x1="470" y1="600" x2="470" y2="572" stroke="#6B7480" stroke-width="2" stroke-dasharray="4 4" marker-end="url(#arrG)"/>
+
+  <!-- Outcome record fields -->
+  <text x="40" y="700" class="b">Outcome record carries</text>
+  <text x="40" y="720" class="m">caseId  scheme@version  contentHash  state  answers  route  reasons[]  uncertain[]  decidedBy  evidenceLoops  responseModel</text>
+  <text x="40" y="752" class="b">Search attributes</text>
+  <text x="40" y="772" class="m">BulwarkScheme  BulwarkRubricVersion  BulwarkRoute (updated on route change and on escalation)</text>
+</svg>

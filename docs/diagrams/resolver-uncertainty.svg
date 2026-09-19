@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 560" width="1120" height="560" font-family="IBM Plex Sans, system-ui, -apple-system, Segoe UI, sans-serif" role="img" aria-label="How the resolver routes a case. Step one computes the uncertain set: a question is uncertain when its answer is missing, malformed, a Noul with probability between lo and hi inclusive, a Choice that selected the no-match label, or a Choice or Score with confidence below the floor. Step two walks the routing rules in order. A rule whose condition holds is a candidate. If the uncertain set is not empty, candidates with route auto_approve or auto_decline are skipped. The first remaining candidate wins and contributes one reason. Step three, no rule fired: if the uncertain set is not empty the route is assessor with one uncertain reason per question; otherwise the route is the rubric default with reason default. A band strip shows the Noul thresholds: no below lo, uncertain from lo to hi inclusive, yes above hi.">
+  <title>How the resolver routes a case</title>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1C2430"/></marker>
+  </defs>
+  <style>
+    .t { fill: #1C2430; font-size: 14px; }
+    .h { fill: #1C2430; font-size: 16px; font-weight: 600; }
+    .s { fill: #6B7480; font-size: 12px; }
+    .m { font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; fill: #1C2430; }
+    .w { fill: #FFFFFF; font-size: 13px; font-weight: 600; }
+  </style>
+
+  <text x="40" y="38" class="h" font-size="22">How the resolver routes a case</text>
+  <text x="40" y="60" class="s">resolver/resolve.ts and bands.ts (plan 0003). Pure code. Uncertainty is a floor computed before any rule runs.</text>
+
+  <!-- Step 1 -->
+  <rect x="40" y="90" width="330" height="230" rx="8" fill="#FFFFFF" stroke="#1C2430" stroke-width="2"/>
+  <rect x="40" y="90" width="330" height="32" rx="8" fill="#1C2430"/>
+  <text x="205" y="112" class="w" text-anchor="middle">1  Compute the uncertain set</text>
+  <text x="56" y="146" class="t">A question is uncertain when its answer is:</text>
+  <text x="56" y="172" class="t">• missing, or the wrong primitive</text>
+  <text x="56" y="194" class="t">• malformed: p or confidence outside [0, 1]</text>
+  <text x="56" y="212" class="t">  or NaN, unknown label, bad score level</text>
+  <text x="56" y="236" class="t">• a Noul with lo ≤ p ≤ hi</text>
+  <text x="56" y="260" class="t">• a Choice that selected no_match</text>
+  <text x="56" y="284" class="t">• a Choice or Score with confidence &lt; floor</text>
+  <text x="56" y="308" class="s">Sorted by question id, so output is deterministic.</text>
+
+  <!-- Step 2 -->
+  <rect x="410" y="90" width="330" height="230" rx="8" fill="#FFFFFF" stroke="#1C2430" stroke-width="2"/>
+  <rect x="410" y="90" width="330" height="32" rx="8" fill="#1C2430"/>
+  <text x="575" y="112" class="w" text-anchor="middle">2  Walk routing.rules in order</text>
+  <text x="426" y="146" class="t">For each rule, the condition holds when the</text>
+  <text x="426" y="164" class="t">answer has the right primitive and:</text>
+  <text x="426" y="188" class="m">band       noulBand(p) === band</text>
+  <text x="426" y="206" class="m">equals     label === value</text>
+  <text x="426" y="224" class="m">is_no_match label === no_match</text>
+  <text x="426" y="242" class="m">confidence_below  conf &lt; v | floor</text>
+  <text x="426" y="260" class="m">score_below / above  level &lt; | &gt; v</text>
+  <text x="426" y="288" class="t">If the uncertain set is not empty, skip any</text>
+  <text x="426" y="306" class="t">candidate routed auto_approve or auto_decline.</text>
+
+  <!-- Step 3 -->
+  <rect x="780" y="90" width="300" height="230" rx="8" fill="#FFFFFF" stroke="#1C2430" stroke-width="2"/>
+  <rect x="780" y="90" width="300" height="32" rx="8" fill="#1C2430"/>
+  <text x="930" y="112" class="w" text-anchor="middle">3  Decide the route</text>
+  <text x="796" y="146" class="t">First remaining candidate wins.</text>
+  <text x="796" y="164" class="t">One reason: rule_index, question, reason.</text>
+  <text x="796" y="196" class="t">No rule fired and the set is not empty:</text>
+  <text x="796" y="214" class="m">assessor, reason uncertain:&lt;q&gt; each</text>
+  <text x="796" y="246" class="t">No rule fired and the set is empty:</text>
+  <text x="796" y="264" class="m">routing.default, reason "default"</text>
+  <text x="796" y="296" class="s">routing.default can never be auto_decline;</text>
+  <text x="796" y="312" class="s">schema and validateRouting both reject it.</text>
+
+  <line x1="370" y1="205" x2="408" y2="205" stroke="#1C2430" stroke-width="2" marker-end="url(#arr)"/>
+  <line x1="740" y1="205" x2="778" y2="205" stroke="#1C2430" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- Noul band strip -->
+  <text x="40" y="370" class="h" font-size="14">Noul bands (thresholds live in the rubric, fixture values shown)</text>
+  <rect x="40" y="390" width="312" height="36" fill="#FBEFE3" stroke="#A85E1C" stroke-width="2"/>
+  <rect x="352" y="390" width="416" height="36" fill="#EEF0F3" stroke="#6B7480" stroke-width="2"/>
+  <rect x="768" y="390" width="312" height="36" fill="#E3F3F0" stroke="#1F7A6B" stroke-width="2"/>
+  <text x="196" y="414" class="h" text-anchor="middle" font-size="14">no</text>
+  <text x="560" y="414" class="h" text-anchor="middle" font-size="14">uncertain (inclusive at both ends)</text>
+  <text x="924" y="414" class="h" text-anchor="middle" font-size="14">yes</text>
+  <text x="40" y="446" class="m">p = 0</text>
+  <text x="352" y="446" class="m" text-anchor="middle">lo = 0.3</text>
+  <text x="768" y="446" class="m" text-anchor="middle">hi = 0.7</text>
+  <text x="1080" y="446" class="m" text-anchor="end">p = 1</text>
+  <text x="40" y="472" class="s">0.29 is no, 0.30 is uncertain, 0.70 is uncertain, 0.71 is yes. Story 18: 0.49 and 0.51 never produce opposite automatic actions.</text>
+
+  <!-- Invariant footer -->
+  <rect x="40" y="496" width="1040" height="44" rx="8" fill="#E6EEF9" stroke="#1F5FA8" stroke-width="2"/>
+  <text x="60" y="523" class="t">Invariant 1: only code decides. The model returns p, label, level, and confidence. This function turns them into a route.</text>
+</svg>
